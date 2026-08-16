@@ -25,6 +25,7 @@ interface Apartment {
   price_monthly: string;
   deposit_amount: string;
   status: string;
+  furnishing: string;
 }
 
 const amenities = ['Furnished Unit', 'CCTV 24 Jam', 'Security 24/7', 'Kolam Renang', 'Gym Center', 'Smart Door Lock'];
@@ -63,6 +64,11 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
           <BuildingArt seed={`${apartment.title}-${apartment.complex_name}-${apartment.id}`} />
           <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(14,42,71,0.85) 100%)' }} />
           <span className="badge success unit-badge">Terverifikasi</span>
+          {apartment.furnishing !== 'unfurnished' && (
+            <span className="unit-furnish-pill" style={{ top: 12, right: 12 }}>
+              {apartment.furnishing === 'semi_furnished' ? 'Semi Furnish' : 'Furnished'}
+            </span>
+          )}
           <span className="unit-price-pill" style={{ bottom: 16, right: 18, fontSize: 16 }}>
             {fmtIdr(apartment.price_monthly)}<span style={{ fontSize: 11, fontWeight: 500 }}>/bulan</span>
           </span>
@@ -87,6 +93,11 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
                 <span className="spec-chip"><BedIcon /> {apartment.bedroom_count} Kamar</span>
                 <span className="spec-chip muted-chip"><BathIcon /> {apartment.bathroom_count} Bathroom</span>
                 {apartment.size_sqm && <span className="spec-chip muted-chip"><RulerIcon /> {apartment.size_sqm} m²</span>}
+                {apartment.furnishing !== 'unfurnished' && (
+                  <span className="chip" style={{ borderColor: 'rgba(184,134,11,0.35)', color: 'var(--accent)' }}>
+                    {apartment.furnishing === 'semi_furnished' ? 'Semi Furnish' : 'Furnished'}
+                  </span>
+                )}
               </div>
 
               <div className="glass" style={{ padding: 18, marginBottom: 20 }}>
