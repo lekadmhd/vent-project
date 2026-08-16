@@ -39,6 +39,7 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             git clean -fd
+            rm -rf node_modules
             npm ci || npm install
             npm run build
             bash database/bootstrap_vps.sh

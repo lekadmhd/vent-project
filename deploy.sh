@@ -26,6 +26,7 @@ git reset --hard origin/main
 git clean -fd
 
 echo "Installing dependencies (workspaces)..."
+rm -rf node_modules
 npm ci || npm install
 
 echo "Building all apps..."
