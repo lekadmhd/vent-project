@@ -210,7 +210,7 @@ export default function HomePage() {
                 <input className="input" type="number" value={filters.radius_km} onChange={(e) => set('radius_km', e.target.value)} placeholder="10" />
               </div>
               <button type="submit" className="btn btn-primary">
-                <SearchIcon size={13} color="currentColor" />
+                <SearchIcon size={13} color="currentColor" />CA
               </button>
             </form>
             <div className="hero-quick"> 
