@@ -698,3 +698,39 @@ a:hover {
   grid-template-columns: 1fr 1fr;
   gap: 0 16px;
 }
+
+/* Live chat bubbles (Bucket Admin) */
+.livechat-msg {
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+}
+
+.livechat-msg-admin {
+  align-self: flex-start;
+  background: #eef3f9;
+  color: #1c2b3a;
+  border-top-left-radius: 4px;
+}
+
+.livechat-msg-guest {
+  align-self: flex-end;
+  background: var(--navy);
+  color: #fff;
+  border-top-right-radius: 4px;
+}
+
+.livechat-time {
+  display: block;
+  margin-top: 4px;
+  font-size: 10.5px;
+  opacity: 0.65;
+}
+
+.livechat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
