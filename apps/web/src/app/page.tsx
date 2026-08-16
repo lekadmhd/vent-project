@@ -236,8 +236,8 @@ export default function HomePage() {
               <div className="stat-label">Unit Aktif</div>
             </div>
             <div className="stat">
-              <div className="stat-value">12+</div>
-              <div className="stat-label">Kota Tersedia</div>
+              <div className="stat-value">7</div>
+              <div className="stat-label">Kota Besar Tersedia</div>
             </div>
             <div className="stat">
               <div className="stat-value">Easy</div>
