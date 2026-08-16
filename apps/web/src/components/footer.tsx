@@ -15,7 +15,7 @@ const columns = [
     links: [
       { label: 'Login', href: '/login' },
       { label: 'Bookings Saya', href: '/bookings' },
-      { label: 'Admin Panel', href: 'http://admin.piraku.net' },
+      { label: 'Admin Panel', href: 'https://admin.piraku.net' },
     ],
   },
 ];

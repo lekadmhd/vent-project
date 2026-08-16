@@ -65,8 +65,8 @@ jobs:
               cp apps/api/.env.example apps/api/.env
               echo "WARNING: API .env created from template on VPS"
             fi
-            echo "NEXT_PUBLIC_API_URL=http://api.piraku.net/api" > apps/web/.env.local
-            echo "NEXT_PUBLIC_API_URL=http://api.piraku.net/api" > apps/admin/.env.local
+            echo "NEXT_PUBLIC_API_URL=https://api.piraku.net/api" > apps/web/.env.local
+            echo "NEXT_PUBLIC_API_URL=https://api.piraku.net/api" > apps/admin/.env.local
             pm2 delete vent-project 2>/dev/null || true
             restart_or_start() {
               local name="$1" script="$2" cwd="$3" port="$4"
