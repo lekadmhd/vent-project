@@ -27,7 +27,7 @@ export function Footer() {
         <div className="footer-grid">
           <div>
             <div className="footer-brand">
-              VENTURRA HOMES<span>//v4</span>
+              VENTURRA HOMES
             </div>
             <p className="footer-about">
               Platform sewa unit apartemen enterprise dengan escrow berlapis, enkripsi data
