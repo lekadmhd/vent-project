@@ -236,7 +236,21 @@ export class ApartmentsService {
     if (!apartment) {
       throw new NotFoundException('Apartment not found');
     }
+    const occupied = await this.isOccupiedNow(id);
+    (apartment as Apartment & { occupied: boolean }).occupied = occupied;
     return apartment;
+  }
+
+  private async isOccupiedNow(apartmentId: string): Promise<boolean> {
+    const rows: { cnt: string }[] = await this.apartmentRepo.manager.query(
+      `SELECT COUNT(*)::int AS cnt FROM bookings b
+       WHERE b.apartment_id = $1
+         AND b.status IN ($2, $3, $4)
+         AND b.check_in <= CURRENT_DATE
+         AND b.check_out >= CURRENT_DATE`,
+      [apartmentId, ...OCCUPYING_BOOKING_STATUSES],
+    );
+    return Number(rows[0]?.cnt ?? 0) > 0;
   }
 
   private async findOrFail(id: string): Promise<Apartment> {

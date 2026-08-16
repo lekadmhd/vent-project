@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -39,6 +40,27 @@ export class BookingsService {
     const nights = this.nightsBetween(dto.check_in, dto.check_out);
     if (nights < 1) {
       throw new BadRequestException('check_out must be after check_in');
+    }
+
+    const overlap = await this.bookingRepo
+      .createQueryBuilder('b')
+      .where('b.apartment_id = :apartmentId', { apartmentId })
+      .andWhere('b.status IN (:...statuses)', {
+        statuses: [
+          BookingStatus.PENDING_PAYMENT,
+          BookingStatus.PENDING_FINANCE_APPROVAL,
+          BookingStatus.PAID_IN_ESCROW,
+          BookingStatus.CHECKED_IN,
+        ],
+      })
+      .andWhere('b.check_in < :checkOut', { checkOut: dto.check_out })
+      .andWhere('b.check_out > :checkIn', { checkIn: dto.check_in })
+      .getCount();
+
+    if (overlap > 0) {
+      throw new ConflictException(
+        'Unit sudah terbooking pada periode tersebut. Silakan pilih tanggal lain.',
+      );
     }
 
     const nightlyRate = this.toNum(apartment.price_monthly) / 30;
