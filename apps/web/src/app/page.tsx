@@ -175,8 +175,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="hero-sub">
-            Platform sewa unit apartemen enterprise dengan escrow berlapis, enkripsi data AES-256,
-            dan verifikasi pembayaran manual oleh Finance Admin. Transparan dari harga hingga check-in.
+            Platform sewa unit apartemen enterprise kemudahan,Transparan dari harga hingga check-in.
           </p>
 
           {/* Prominent search bar — jendela360 style */}
@@ -200,7 +199,7 @@ export default function HomePage() {
                 </select>
               </div>
               <div className="field">
-                <label>Perabot</label>
+                <label>Type Furnish</label>
                 <select className="select" value={filters.furnishing} onChange={(e) => set('furnishing', e.target.value)}>
                   <option value="">Semua</option>
                   <option value="semi_furnished">Semi Furnish</option>
