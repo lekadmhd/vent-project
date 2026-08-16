@@ -55,6 +55,8 @@ export class ApartmentsService {
         ? (dto.status ?? PropertyStatus.ACTIVE)
         : PropertyStatus.PENDING_APPROVAL,
       furnishing: dto.furnishing ?? FurnishingStatus.UNFURNISHED,
+      image_urls: dto.image_urls ?? [],
+      image_url: (dto.image_urls && dto.image_urls[0]) ?? null,
     });
     const saved = await this.apartmentRepo.save(apartment);
     await this.auditService.log(
@@ -89,6 +91,10 @@ export class ApartmentsService {
     if (dto.deposit_amount != null) apartment.deposit_amount = String(dto.deposit_amount);
     if (dto.status != null) apartment.status = dto.status;
     if (dto.furnishing != null) apartment.furnishing = dto.furnishing;
+    if (dto.image_urls !== undefined) {
+      apartment.image_urls = dto.image_urls;
+      apartment.image_url = dto.image_urls[0] ?? null;
+    }
 
     const saved = await this.apartmentRepo.save(apartment);
     await this.auditService.log(
