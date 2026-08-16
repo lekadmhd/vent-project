@@ -243,8 +243,12 @@ export default function HomePage() {
               <div className="stat-label">Kota Tersedia</div>
             </div>
             <div className="stat">
-              <div className="stat-value">2-Layer</div>
-              <div className="stat-label">Verifikasi Finance</div>
+              <div className="stat-value">Easy</div>
+              <div className="stat-label">Kemudahan Akses Dimanapun</div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">Best Price</div>
+              <div className="stat-label">Harga Terbaik</div>
             </div>
             
           </div>
