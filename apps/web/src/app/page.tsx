@@ -47,7 +47,7 @@ const steps = [
   {
     n: '01',
     title: 'Temukan Unit',
-    desc: 'Cari apartemen dengan filter kota, harga, dan radius geografis real-time di seluruh kota.',
+    desc: 'Cari apartemen dengan filter kota, harga, tipe kamar, dan perabotan secara real-time di seluruh kota.',
   },
   {
     n: '02',
@@ -199,8 +199,12 @@ export default function HomePage() {
                 </select>
               </div>
               <div className="field">
-                <label>Radius (km)</label>
-                <input className="input" type="number" value={filters.radius_km} onChange={(e) => set('radius_km', e.target.value)} placeholder="10" />
+                <label>Perabot</label>
+                <select className="select" value={filters.furnishing} onChange={(e) => set('furnishing', e.target.value)}>
+                  <option value="">Semua</option>
+                  <option value="semi_furnished">Semi Furnish</option>
+                  <option value="furnished">Furnished</option>
+                </select>
               </div>
               <button type="submit" className="btn btn-primary">
                 <SearchIcon size={13} color="currentColor" />Cari
@@ -301,6 +305,11 @@ export default function HomePage() {
                     <span className="unit-price-pill">
                       {fmtIdr(a.price_monthly)}<span style={{ fontSize: 10, fontWeight: 500 }}>/bln</span>
                     </span>
+                    {a.furnishing !== 'unfurnished' && (
+                      <span className="unit-furnish-pill">
+                        {a.furnishing === 'semi_furnished' ? 'Semi Furnish' : 'Furnished'}
+                      </span>
+                    )}
                   </div>
                   <div className="unit-body">
                     <div>
