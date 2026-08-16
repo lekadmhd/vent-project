@@ -1875,3 +1875,13 @@ a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+.file-upload-preview {
+  width: 64px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+  flex-shrink: 0;
+}

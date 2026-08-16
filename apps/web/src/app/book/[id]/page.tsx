@@ -208,12 +208,30 @@ export default function BookPage({ params }: { params: { id: string } }) {
         <input className="input" type="number" value={payment.transfer_amount} onChange={(e) => setPayment((p) => ({ ...p, transfer_amount: e.target.value }))} placeholder={booking.total_paid} />
       </div>
       <div className="field">
-        <label>URL Bukti Transfer (JPG/PNG/PDF, maks 5MB)</label>
-        <input className="input" value={payment.proof_of_transfer_url} onChange={(e) => setPayment((p) => ({ ...p, proof_of_transfer_url: e.target.value }))} placeholder="https://.../bukti-transfer.jpg" />
+        <label>Foto KTP (untuk verifikasi identitas)</label>
+        <FileUploader
+          url={idCardUrl}
+          onChange={setIdCardUrl}
+          label="KTP"
+          folder="kyc"
+          accept={['image']}
+          hint="Upload foto KTP Anda. Data hanya digunakan untuk verifikasi booking."
+        />
+      </div>
+      <div className="field">
+        <label>Bukti Transfer (JPG/PNG/PDF)</label>
+        <FileUploader
+          url={payment.proof_of_transfer_url}
+          onChange={(url) => setPayment((p) => ({ ...p, proof_of_transfer_url: url }))}
+          label="Bukti Transfer"
+          folder="payments"
+          accept={['image', 'pdf']}
+          hint="Upload screenshot bukti transfer Anda."
+        />
       </div>
 
       <div className="row">
-        <button className="btn btn-primary" onClick={submitPayment} disabled={busy}>
+        <button className="btn btn-primary" onClick={submitPayment} disabled={busy || !payment.proof_of_transfer_url || !idCardUrl}>
           {busy ? 'Mengirim...' : 'Kirim Bukti Transfer'}
         </button>
         <Link href={`/apartments/${params.id}`} className="btn">
