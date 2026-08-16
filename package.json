@@ -1,10 +1,17 @@
 {
-  "name": "vent-project",
-  "version": "1.0.0",
-  "description": "Vent project - Node.js app",
-  "main": "server.js",
+  "name": "aptrent",
+  "version": "4.0.0",
+  "private": true,
+  "description": "AptRent - Platform Sewa Unit Apartemen Enterprise",
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
-    "start": "node server.js"
+    "build": "npm run build --workspace @aptrent/api",
+    "dev": "npm run start:dev --workspace @aptrent/api",
+    "start": "npm run start:prod --workspace @aptrent/api",
+    "typecheck": "npm run typecheck --workspace @aptrent/api",
+    "lint": "npm run lint --workspace @aptrent/api"
   },
   "engines": {
     "node": ">=18"
