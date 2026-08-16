@@ -257,12 +257,14 @@ export default function ApartmentsPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
 
         <div className="card">
           <h2 className="section-title">Semua Unit ({apartments.length})</h2>
-          <table className="table">
+          <div className="table-responsive">
+          <table className="table table-striped table-hover">
             <thead>
               <tr>
                 <th>Unit</th>
@@ -308,6 +310,7 @@ export default function ApartmentsPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {modal && (
