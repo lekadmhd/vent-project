@@ -14,6 +14,7 @@ interface Apartment {
   city: string;
   price_monthly: string;
   deposit_amount: string;
+  occupied?: boolean;
 }
 
 interface Booking {

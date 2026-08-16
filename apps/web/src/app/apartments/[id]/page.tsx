@@ -26,6 +26,7 @@ interface Apartment {
   status: string;
   furnishing: string;
   image_urls?: string[];
+  occupied?: boolean;
 }
 
 const amenities = ['Furnished Unit', 'CCTV 24 Jam', 'Security 24/7', 'Kolam Renang', 'Gym Center', 'Smart Door Lock'];
@@ -137,7 +138,9 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
               <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(14,42,71,0.85) 100%)' }} />
             </>
           )}
-          <span className="badge success unit-badge">Terverifikasi</span>
+          <span className={`badge ${apartment.occupied ? 'danger' : 'success'} unit-badge`}>
+            {apartment.occupied ? 'Sudah Tersewa' : 'Terverifikasi'}
+          </span>
           {apartment.furnishing !== 'unfurnished' && (
             <span className="unit-furnish-pill" style={{ top: 12, right: 12 }}>
               {apartment.furnishing === 'semi_furnished' ? 'Semi Furnish' : 'Furnished'}
@@ -253,9 +256,15 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
             </p>
 
             {user ? (
-              <Link href={`/book/${apartment.id}`} className="btn btn-primary" style={{ width: '100%', marginTop: 18, padding: '14px' }}>
-                Booking Sekarang →
-              </Link>
+              apartment.occupied ? (
+                <span className="btn btn-danger" style={{ width: '100%', marginTop: 18, padding: '14px', cursor: 'not-allowed' }}>
+                  Unit Sedang Tersewa
+                </span>
+              ) : (
+                <Link href={`/book/${apartment.id}`} className="btn btn-primary" style={{ width: '100%', marginTop: 18, padding: '14px' }}>
+                  Booking Sekarang →
+                </Link>
+              )
             ) : (
               <Link href="/login" className="btn btn-primary" style={{ width: '100%', marginTop: 18, padding: '14px' }}>
                 Masuk untuk Booking
