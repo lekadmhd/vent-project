@@ -256,8 +256,16 @@ export default function ApartmentsPage() {
                 {pending.map((a) => (
                   <tr key={a.id}>
                     <td>
-                      {a.title}
-                      <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
+                      <div className="row" style={{ gap: 10 }}>
+                        {a.image_urls?.[0] ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={a.image_urls[0]} alt="" width="42" height="32" className="img-thumb" />
+                        ) : null}
+                        <div>
+                          {a.title}
+                          <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
+                        </div>
+                      </div>
                     </td>
                     <td>{a.city}</td>
                     <td>{a.furnishing === 'semi_furnished' ? 'Semi Furnish' : a.furnishing === 'furnished' ? 'Furnished' : 'Tanpa Perabot'}</td>
@@ -299,8 +307,16 @@ export default function ApartmentsPage() {
               {others.map((a) => (
                 <tr key={a.id}>
                   <td>
-                    {a.title}
-                    <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
+                    <div className="row" style={{ gap: 10 }}>
+                      {a.image_urls?.[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={a.image_urls[0]} alt="" width="42" height="32" className="img-thumb" />
+                      ) : null}
+                      <div>
+                        {a.title}
+                        <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
+                      </div>
+                    </div>
                   </td>
                   <td>{a.city}</td>
                   <td>{a.furnishing === 'semi_furnished' ? 'Semi Furnish' : a.furnishing === 'furnished' ? 'Furnished' : 'Tanpa Perabot'}</td>
@@ -412,6 +428,10 @@ export default function ApartmentsPage() {
                       {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
                     </select>
                   </div>
+                </div>
+                <div className="field" style={{ marginTop: 14 }}>
+                  <label>Foto Unit</label>
+                  <ImageUploader images={form.image_urls} onChange={(urls) => set('image_urls', urls)} />
                 </div>
                 <div className="row" style={{ marginTop: 8 }}>
                   <button type="submit" className="btn btn-gold" disabled={saving}>
