@@ -97,7 +97,8 @@ export default function DashboardPage() {
 
         <div className="card">
           <h2 className="section-title">Audit Trail Terbaru</h2>
-          <table className="table">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
             <thead>
               <tr>
                 <th>Waktu</th>
