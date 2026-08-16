@@ -44,6 +44,7 @@ echo "NEXT_PUBLIC_API_URL=$PUBLIC_API_URL" > "$APP_DIR/apps/web/.env.local"
 echo "NEXT_PUBLIC_API_URL=$PUBLIC_API_URL" > "$APP_DIR/apps/admin/.env.local"
 
 echo "Restarting apps with PM2..."
+pm2 delete vent-project 2>/dev/null || true
 
 restart_or_start() {
   local name="$1" script="$2" cwd="$3" port="$4"
