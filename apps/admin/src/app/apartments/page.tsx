@@ -22,6 +22,7 @@ interface ApartmentRow {
   address: string;
   latitude: string;
   longitude: string;
+  furnishing: string;
 }
 
 interface ApartmentForm {
@@ -39,6 +40,7 @@ interface ApartmentForm {
   price_monthly: string;
   deposit_amount: string;
   status: string;
+  furnishing: string;
 }
 
 const EMPTY_FORM: ApartmentForm = {
@@ -56,7 +58,14 @@ const EMPTY_FORM: ApartmentForm = {
   price_monthly: '',
   deposit_amount: '',
   status: 'active',
+  furnishing: 'unfurnished',
 };
+
+const FURNISH_OPTIONS = [
+  { value: 'unfurnished', label: 'Tanpa Perabot' },
+  { value: 'semi_furnished', label: 'Semi Furnish' },
+  { value: 'furnished', label: 'Furnished' },
+];
 
 const STATUS_OPTIONS = [
   'draft',
@@ -130,6 +139,7 @@ export default function ApartmentsPage() {
       price_monthly: String(Math.round(parseFloat(a.price_monthly))),
       deposit_amount: String(Math.round(parseFloat(a.deposit_amount))),
       status: a.status,
+      furnishing: a.furnishing,
     });
     setModal('edit');
   };
@@ -153,6 +163,7 @@ export default function ApartmentsPage() {
       price_monthly: Number(form.price_monthly),
       deposit_amount: Number(form.deposit_amount),
       status: form.status,
+      furnishing: form.furnishing,
     };
     try {
       if (modal === 'edit' && editingId) {
@@ -229,6 +240,7 @@ export default function ApartmentsPage() {
                 <tr>
                   <th>Unit</th>
                   <th>Kota</th>
+                  <th>Perabot</th>
                   <th>Sewa</th>
                   <th>Status</th>
                   <th></th>
@@ -242,6 +254,7 @@ export default function ApartmentsPage() {
                       <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
                     </td>
                     <td>{a.city}</td>
+                    <td>{a.furnishing === 'semi_furnished' ? 'Semi Furnish' : a.furnishing === 'furnished' ? 'Furnished' : 'Tanpa Perabot'}</td>
                     <td className="mono" style={{ color: 'var(--navy)', fontWeight: 600 }}>{fmtIdr(a.price_monthly)}</td>
                     <td><StatusBadge status={a.status} /></td>
                     <td>
