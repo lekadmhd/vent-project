@@ -370,7 +370,7 @@ export default function HomePage() {
         <div className="section-head">
           <div className="section-kicker">Proses Transparan</div>
           <h2 className="section-title" style={{ fontSize: 30 }}>
-            Bagaimana Cara Kerja
+            Bagaimana Proses
           </h2>
           <p className="section-desc">
             Alur booking enterprise dengan mudah dan cepat.
