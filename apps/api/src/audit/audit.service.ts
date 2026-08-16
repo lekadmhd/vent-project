@@ -13,7 +13,7 @@ export class AuditService {
   ) {}
 
   async log(
-    actorId: string,
+    actorId: string | null,
     action: AuditAction | string,
     targetResource: string,
     req?: Request,

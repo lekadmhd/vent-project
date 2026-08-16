@@ -13,10 +13,10 @@ export class SecurityAuditLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'actor_id' })
-  actor_id: string;
+  @Column({ name: 'actor_id', nullable: true, type: 'uuid' })
+  actor_id: string | null;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'actor_id' })
   actor: User;
 

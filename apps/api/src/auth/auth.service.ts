@@ -51,7 +51,7 @@ export class AuthService {
     const user = await this.userRepo.findOne({ where: { email: dto.email.toLowerCase() } });
     if (!user || !(await bcrypt.compare(dto.password, user.password_hash))) {
       await this.auditService.log(
-        user?.id ?? 'unknown',
+        null,
         AuditAction.LOGIN_FAILED,
         'users:' + (user?.id ?? 'unknown'),
         req,
