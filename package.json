@@ -1,0 +1,12 @@
+{
+  "name": "vent-project",
+  "version": "1.0.0",
+  "description": "Vent project - Node.js app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
