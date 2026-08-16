@@ -102,6 +102,7 @@ CREATE TABLE manual_payments (
     sender_account_name VARCHAR(255) NOT NULL,
     transfer_amount DECIMAL(12, 2) NOT NULL,
     proof_of_transfer_url TEXT NOT NULL, -- S3 Private URL
+    id_card_url TEXT, -- Cloudinary KTP URL
     verification_status payment_verification_status DEFAULT 'pending_review',
     verified_by UUID REFERENCES users(id), -- Finance Admin ID
     rejection_reason TEXT,

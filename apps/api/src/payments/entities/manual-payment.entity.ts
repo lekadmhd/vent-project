@@ -44,6 +44,9 @@ export class ManualPayment {
   @Column({ name: 'proof_of_transfer_url' })
   proof_of_transfer_url: string;
 
+  @Column({ name: 'id_card_url', type: 'text', nullable: true })
+  id_card_url: string | null;
+
   @Column({
     name: 'verification_status',
     type: 'enum',

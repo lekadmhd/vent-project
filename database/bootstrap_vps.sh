@@ -59,4 +59,7 @@ sudo -u postgres psql -d "$DB_NAME" -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA pub
 sudo -u postgres psql -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO $DB_USER;"
 sudo -u postgres psql -d "$DB_NAME" -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO $DB_USER;"
 
+echo "Applying idempotent migrations..."
+sudo -u postgres psql -d "$DB_NAME" -c "ALTER TABLE manual_payments ADD COLUMN IF NOT EXISTS id_card_url TEXT;"
+
 echo "=== PostgreSQL bootstrap complete ==="

@@ -16,6 +16,10 @@ export class SubmitPaymentDto {
 
   @IsString()
   proof_of_transfer_url: string;
+
+  @IsString()
+  @IsOptional()
+  id_card_url?: string;
 }
 
 export class ApprovePaymentDto {

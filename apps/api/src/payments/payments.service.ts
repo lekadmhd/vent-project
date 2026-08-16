@@ -54,6 +54,7 @@ export class PaymentsService {
       sender_account_name: dto.sender_account_name,
       transfer_amount: String(dto.transfer_amount),
       proof_of_transfer_url: dto.proof_of_transfer_url,
+      id_card_url: dto.id_card_url ?? null,
       verification_status: PaymentVerificationStatus.PENDING_REVIEW,
     });
     const saved = await this.paymentRepo.save(payment);
