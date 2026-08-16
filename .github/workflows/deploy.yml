@@ -33,6 +33,23 @@ jobs:
           script: |
             set -e
             APP_DIR="${{ secrets.APP_DIR }}"
+            ensure_swap() {
+              local existing
+              existing=$(free -m | awk '/Swap:/{print $2}')
+              if [ "$existing" -lt 1024 ]; then
+                echo "Adding swapfile (current: ${existing}MB)..."
+                local path="/swapfile-$RANDOM"
+                fallocate -l 4G "$path" 2>/dev/null || dd if=/dev/zero of="$path" bs=1M count=4096 status=none
+                chmod 600 "$path"
+                mkswap "$path" >/dev/null
+                swapon "$path"
+                echo "$path none swap sw 0 0" >> /etc/fstab
+                sysctl -w vm.swappiness=10 >/dev/null
+              fi
+              echo "Swap: $(free -h | awk '/Swap:/{print $2}')"
+            }
+            ensure_swap
+            export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
             if [ ! -d "$APP_DIR/.git" ]; then
               git clone git@github.com:lekadmhd/vent-project.git $APP_DIR
             fi
@@ -41,7 +58,7 @@ jobs:
             git reset --hard origin/main
             git clean -fd
             rm -rf node_modules
-            npm ci || npm install
+            npm ci --no-audit --no-fund || npm install --no-audit --no-fund
             npm run build
             bash database/bootstrap_vps.sh
             if [ ! -f apps/api/.env ]; then
@@ -54,7 +71,7 @@ jobs:
             restart_or_start() {
               local name="$1" script="$2" cwd="$3" port="$4"
               pm2 delete "$name" 2>/dev/null || true
-              pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
+              pm2 start "$script" --name "$name" --cwd "$cwd" --max-memory-restart 300M -- start -p "$port"
             }
             restart_or_start aptrent-api "$APP_DIR/apps/api/dist/main.js" "$APP_DIR/apps/api" 5000
             restart_or_start aptrent-web "$APP_DIR/node_modules/.bin/next" "$APP_DIR/apps/web" 3000
