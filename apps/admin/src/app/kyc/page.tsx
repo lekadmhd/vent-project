@@ -87,7 +87,8 @@ export default function KycPage() {
         {error && <div className="error">{error}</div>}
 
         <div className="card" style={{ marginBottom: 24 }}>
-          <table className="table">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
             <thead>
               <tr>
                 <th>Nama</th>
@@ -116,6 +117,7 @@ export default function KycPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {detail && detailUser && (

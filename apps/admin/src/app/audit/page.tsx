@@ -46,7 +46,8 @@ export default function AuditPage() {
         {error && <div className="error">{error}</div>}
 
         <div className="card">
-          <table className="table">
+          <div className="table-responsive">
+            <table className="table table-striped table-hover">
             <thead>
               <tr>
                 <th>Waktu</th>
@@ -74,6 +75,7 @@ export default function AuditPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </RequireAdmin>

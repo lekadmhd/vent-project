@@ -222,7 +222,8 @@ export default function ApartmentsPage() {
         {pending.length > 0 && (
           <div className="card" style={{ marginBottom: 24 }}>
             <h2 className="section-title" style={{ color: 'var(--warn)' }}>Menunggu Persetujuan ({pending.length})</h2>
-            <table className="table">
+            <div className="table-responsive">
+            <table className="table table-striped table-hover">
               <thead>
                 <tr>
                   <th>Unit</th>
