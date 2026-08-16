@@ -210,7 +210,7 @@ export default function HomePage() {
                 <input className="input" type="number" value={filters.radius_km} onChange={(e) => set('radius_km', e.target.value)} placeholder="10" />
               </div>
               <button type="submit" className="btn btn-primary">
-                <SearchIcon size={15} color="currentColor" /> Cari
+                <SearchIcon size={13} color="currentColor" /> Cari
               </button>
             </form>
             <div className="hero-quick">
@@ -246,10 +246,7 @@ export default function HomePage() {
               <div className="stat-value">2-Layer</div>
               <div className="stat-label">Verifikasi Finance</div>
             </div>
-            <div className="stat">
-              <div className="stat-value">AES-256</div>
-              <div className="stat-label">Enkripsi Data</div>
-            </div>
+            
           </div>
         </div>
 
