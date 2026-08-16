@@ -45,6 +45,11 @@ export function Navbar() {
               <Link href="/bookings" className="nav-link">
                 Bookings
               </Link>
+              {user.role === 'landlord' && (
+                <Link href="/landlord" className="nav-link">
+                  Panel Landlord
+                </Link>
+              )}
               <span className="muted mono" style={{ fontSize: 13 }}>
                 {user.name}
               </span>
