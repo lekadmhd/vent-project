@@ -56,6 +56,8 @@ CREATE TABLE apartments (
     deposit_amount DECIMAL(12, 2) NOT NULL,
     status property_status DEFAULT 'pending_approval',
     furnishing furnishing_status DEFAULT 'unfurnished',
+    image_url TEXT, -- Cloudinary cover URL
+    image_urls TEXT[] DEFAULT '{}', -- Cloudinary gallery URLs
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
