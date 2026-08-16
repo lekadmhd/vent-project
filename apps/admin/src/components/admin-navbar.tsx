@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
@@ -7,6 +8,7 @@ import { useAuth } from '@/lib/auth';
 export function AdminNavbar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   const links = [
     { href: '/', label: 'Dashboard' },
@@ -21,32 +23,63 @@ export function AdminNavbar() {
   return (
     <nav className="navbar">
       <div className="container navbar-inner">
-        <Link href="/" className="brand">
+        <Link href="/" className="brand" onClick={() => setOpen(false)}>
           APTRENT<span>//ADMIN</span>
         </Link>
-        <div className="row" style={{ gap: 4 }}>
+
+        <div className="nav-links">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="btn"
-              style={
-                pathname === l.href
-                  ? { borderColor: 'var(--accent)', boxShadow: '0 0 12px rgba(0,240,255,0.25)' }
-                  : undefined
-              }
+              className={`nav-btn ${pathname === l.href ? 'active' : ''}`}
             >
               {l.label}
             </Link>
           ))}
-          <span className="muted mono" style={{ fontSize: 13, marginLeft: 8 }}>
+        </div>
+
+        <div className="nav-user">
+          <span className="muted mono" style={{ fontSize: 13 }}>
             {user.name} ({user.role})
           </span>
-          <button className="btn" onClick={logout}>
+          <button className="nav-btn" onClick={logout}>
             Logout
           </button>
         </div>
+
+        <button className="nav-burger" aria-label="Menu" onClick={() => setOpen((o) => !o)}>
+          <span />
+          <span />
+          <span />
+        </button>
       </div>
+
+      {open && (
+        <div className="nav-mobile">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              className="nav-mobile-link"
+              onClick={() => setOpen(false)}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div className="nav-mobile-divider" />
+          <button
+            className="nav-mobile-link"
+            style={{ textAlign: 'left', background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', fontFamily: 'var(--font-sans)', fontSize: 15 }}
+            onClick={() => {
+              setOpen(false);
+              logout();
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      )}
     </nav>
   );
 }

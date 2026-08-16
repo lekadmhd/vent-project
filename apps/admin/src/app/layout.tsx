@@ -14,7 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AuthProvider>
           <AdminNavbar />
-          <main className="container" style={{ paddingTop: 32, paddingBottom: 64 }}>
+          <main className="container" style={{ paddingTop: 48, paddingBottom: 80 }}>
             {children}
           </main>
         </AuthProvider>

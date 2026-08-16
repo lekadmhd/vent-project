@@ -77,12 +77,14 @@ export default function DashboardPage() {
   return (
     <RequireAdmin>
       <div>
-        <h1 className="title" style={{ marginBottom: 8 }}>
-          Dashboard <span style={{ color: 'var(--accent)' }}>Control</span>
-        </h1>
-        <p className="muted" style={{ marginBottom: 24, fontSize: 14 }}>
-          Realtime Analytics — Finance Escalation & Operations Control
-        </p>
+        <div className="page-header">
+          <h1 className="title">
+            Dashboard <span style={{ color: 'var(--accent)' }}>Control</span>
+          </h1>
+          <p>
+            Realtime Analytics — Finance Escalation & Operations Control
+          </p>
+        </div>
 
         {error && <div className="error">{error}</div>}
 
