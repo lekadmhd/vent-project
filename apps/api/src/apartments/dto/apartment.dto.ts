@@ -67,6 +67,11 @@ export class CreateApartmentDto {
   @IsEnum(FurnishingStatus)
   @IsOptional()
   furnishing?: FurnishingStatus;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  image_urls?: string[];
 }
 
 export class UpdateApartmentDto {
@@ -133,6 +138,11 @@ export class UpdateApartmentDto {
   @IsEnum(FurnishingStatus)
   @IsOptional()
   furnishing?: FurnishingStatus;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  image_urls?: string[];
 }
 
 export class SearchApartmentDto {
