@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Fragment } from 'react';
 import { api, getToken } from '@/lib/api';
 import { RequireAdmin } from '@/components/require-admin';
 import { fmtDateTime, fmtIdr, StatusBadge } from '@/lib/format';
@@ -50,6 +50,7 @@ export default function FinancePage() {
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState<Record<string, string>>({});
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setError('');
@@ -82,6 +83,8 @@ export default function FinancePage() {
     }
   };
 
+  const toggle = (id: string) => setExpandedId((cur) => (cur === id ? null : id));
+
   return (
     <RequireAdmin>
       <div>
@@ -96,115 +99,156 @@ export default function FinancePage() {
           </select>
         </div>
         <p className="muted" style={{ marginBottom: 24, fontSize: 14 }}>
-          Verifikasi manual 2-layer: kesesuaian nominal + mutasi. Klik Approve untuk melepas dana ke escrow.
+          Verifikasi manual 2-layer: kesesuaian nominal + mutasi. Klik Detail untuk melihat invoice, lalu Approve untuk melepas dana ke escrow.
         </p>
 
         {error && <div className="error">{error}</div>}
 
         {payments.length === 0 && <p className="muted">Tidak ada pembayaran di filter ini.</p>}
 
-        {payments.map((p) => {
-          const b = p.booking;
-          const isPending = p.verification_status === 'pending_review';
-          return (
-            <div className="card" key={p.id} style={{ marginBottom: 20 }}>
-              <div className="row-between" style={{ marginBottom: 14 }}>
-                <div className="row" style={{ gap: 10 }}>
-                  <span className="mono" style={{ color: 'var(--accent)', fontWeight: 600 }}>
-                    {b?.booking_code ?? p.id}
-                  </span>
-                  <StatusBadge status={p.verification_status} />
-                  <StatusBadge status={b?.status ?? ''} />
-                </div>
-                <span className="muted mono" style={{ fontSize: 12 }}>
-                  {fmtDateTime(p.created_at)}
-                </span>
-              </div>
+        {payments.length > 0 && (
+          <div className="card">
+            <div className="table-responsive">
+              <table className="table table-striped table-hover table-sm">
+                <thead>
+                  <tr>
+                    <th>Waktu</th>
+                    <th>Kode Booking</th>
+                    <th>Tenant</th>
+                    <th>Unit</th>
+                    <th>Kota</th>
+                    <th>Transfer</th>
+                    <th>Total Invoice</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.map((p) => {
+                    const b = p.booking;
+                    const isPending = p.verification_status === 'pending_review';
+                    const open = expandedId === p.id;
+                    return (
+                      <Fragment key={p.id}>
+                        <tr className={open ? 'table-active' : ''}>
+                          <td className="mono" style={{ fontSize: 12 }}>{fmtDateTime(p.created_at)}</td>
+                          <td className="mono" style={{ color: 'var(--accent)', fontWeight: 600 }}>{b?.booking_code ?? p.id.slice(0, 8)}</td>
+                          <td>
+                            {p.tenant?.name ?? '-'}
+                            {p.tenant?.email && <div className="muted mono" style={{ fontSize: 11 }}>{p.tenant.email}</div>}
+                          </td>
+                          <td>{b?.apartment ? `${b.apartment.complex_name} · Unit ${b.apartment.unit_number}` : '-'}</td>
+                          <td>{b?.apartment?.city ?? '-'}</td>
+                          <td className="mono" style={{ fontWeight: 600 }}>{fmtIdr(p.transfer_amount)}</td>
+                          <td className="mono">{fmtIdr(b?.total_paid ?? 0)}</td>
+                          <td>
+                            <StatusBadge status={p.verification_status} />
+                            {b?.status && <div style={{ marginTop: 4 }}><StatusBadge status={b.status} /></div>}
+                          </td>
+                          <td>
+                            <div className="row" style={{ gap: 6 }}>
+                              <button className="btn" style={{ padding: '5px 10px', fontSize: 12 }} onClick={() => toggle(p.id)}>
+                                {open ? 'Tutup' : 'Detail'}
+                              </button>
+                              <a className="btn" href={p.proof_of_transfer_url} target="_blank" rel="noreferrer" style={{ padding: '5px 10px', fontSize: 12 }}>
+                                Bukti
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
 
-              <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 14 }}>
-                <div className="glass" style={{ padding: 16 }}>
-                  <div className="muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
-                    Bukti Transfer (Tenant)
-                  </div>
-                  <p style={{ fontSize: 14, marginBottom: 6 }}>
-                    <strong>{p.sender_account_name}</strong> · {p.sender_bank_name}
-                  </p>
-                  <p className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)', marginBottom: 10 }}>
-                    {fmtIdr(p.transfer_amount)}
-                  </p>
-                  <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Bank Tujuan (Escrow)</div>
-                  <div className="mono" style={{ fontSize: 12, marginBottom: 10 }}>{p.bank_destination}</div>
-                  <a className="btn" href={p.proof_of_transfer_url} target="_blank" rel="noreferrer" style={{ padding: '6px 12px', fontSize: 12 }}>
-                    Lihat Bukti →
-                  </a>
-                  {p.rejection_reason && (
-                    <div className="muted" style={{ fontSize: 12, marginTop: 10 }}>
-                      Alasan reject: {p.rejection_reason}
-                    </div>
-                  )}
-                </div>
+                        {open && (
+                          <tr>
+                            <td colSpan={9} style={{ background: 'var(--surface)' }}>
+                              <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 12 }}>
+                                <div className="glass" style={{ padding: 16 }}>
+                                  <div className="muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+                                    Bukti Transfer (Tenant)
+                                  </div>
+                                  <p style={{ fontSize: 14, marginBottom: 6 }}>
+                                    <strong>{p.sender_account_name}</strong> · {p.sender_bank_name}
+                                  </p>
+                                  <p className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)', marginBottom: 10 }}>
+                                    {fmtIdr(p.transfer_amount)}
+                                  </p>
+                                  <div className="muted" style={{ fontSize: 12, marginBottom: 4 }}>Bank Tujuan (Escrow)</div>
+                                  <div className="mono" style={{ fontSize: 12, marginBottom: 10 }}>{p.bank_destination}</div>
+                                  {p.rejection_reason && (
+                                    <div className="muted" style={{ fontSize: 12, marginTop: 10 }}>
+                                      Alasan reject: {p.rejection_reason}
+                                    </div>
+                                  )}
+                                </div>
 
-                <div className="glass" style={{ padding: 16 }}>
-                  <div className="muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
-                    Invoice Pembayaran
-                  </div>
-                  <p style={{ fontSize: 14, marginBottom: 6 }}>
-                    {b?.apartment ? `${b.apartment.complex_name} · Unit ${b.apartment.unit_number}` : 'Apartemen'}
-                    <span className="muted"> · {b?.apartment?.city}</span>
-                  </p>
-                  {[
-                    ['Sewa', b?.rent_amount],
-                    ['Deposit', b?.deposit_amount],
-                    ['Admin Fee', b?.platform_fee],
-                    ['Kode Unik', b ? String(b.unique_code) : ''],
-                  ].map(([label, value]) => (
-                    <div className="row-between" style={{ marginBottom: 4 }} key={label}>
-                      <span className="muted" style={{ fontSize: 13 }}>{label}</span>
-                      <span className="mono" style={{ fontSize: 13 }}>
-                        {label === 'Kode Unik' ? value : fmtIdr(value ?? 0)}
-                      </span>
-                    </div>
-                  ))}
-                  <div className="row-between" style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 8, marginTop: 4 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700 }}>Total Invoice</span>
-                    <span className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>
-                      {fmtIdr(b?.total_paid ?? 0)}
-                    </span>
-                  </div>
-                  <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>
-                    Periode {b?.check_in} → {b?.check_out} · Tenant: {p.tenant?.name ?? '-'}
-                  </div>
-                </div>
-              </div>
+                                <div className="glass" style={{ padding: 16 }}>
+                                  <div className="muted" style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
+                                    Invoice Pembayaran
+                                  </div>
+                                  <p style={{ fontSize: 14, marginBottom: 6 }}>
+                                    {b?.apartment ? `${b.apartment.complex_name} · Unit ${b.apartment.unit_number}` : 'Apartemen'}
+                                    <span className="muted"> · {b?.apartment?.city}</span>
+                                  </p>
+                                  {[
+                                    ['Sewa', b?.rent_amount],
+                                    ['Deposit', b?.deposit_amount],
+                                    ['Admin Fee', b?.platform_fee],
+                                    ['Kode Unik', b ? String(b.unique_code) : ''],
+                                  ].map(([label, value]) => (
+                                    <div className="row-between" style={{ marginBottom: 4 }} key={label}>
+                                      <span className="muted" style={{ fontSize: 13 }}>{label}</span>
+                                      <span className="mono" style={{ fontSize: 13 }}>
+                                        {label === 'Kode Unik' ? value : fmtIdr(value ?? 0)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                  <div className="row-between" style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 4 }}>
+                                    <span style={{ fontSize: 14, fontWeight: 700 }}>Total Invoice</span>
+                                    <span className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>
+                                      {fmtIdr(b?.total_paid ?? 0)}
+                                    </span>
+                                  </div>
+                                  <div className="muted" style={{ fontSize: 11, marginTop: 8 }}>
+                                    Periode {b?.check_in} → {b?.check_out} · Tenant: {p.tenant?.name ?? '-'}
+                                  </div>
+                                </div>
+                              </div>
 
-              {isPending && (
-                <div className="row" style={{ justifyContent: 'flex-end' }}>
-                  <input
-                    className="input"
-                    placeholder="Alasan reject (wajib saat reject)"
-                    style={{ flex: 1, maxWidth: 360 }}
-                    value={rejectReason[p.id] ?? ''}
-                    onChange={(e) => setRejectReason((r) => ({ ...r, [p.id]: e.target.value }))}
-                  />
-                  <button
-                    className="btn btn-danger"
-                    disabled={busyId === p.id || !(rejectReason[p.id]?.trim() ?? '')}
-                    onClick={() => act(p.id, 'reject')}
-                  >
-                    Reject Payment
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    disabled={busyId === p.id}
-                    onClick={() => act(p.id, 'approve')}
-                  >
-                    {busyId === p.id ? 'Memproses...' : 'APPROVE PAYMENT'}
-                  </button>
-                </div>
-              )}
+                              {isPending && (
+                                <div className="row" style={{ justifyContent: 'flex-end' }}>
+                                  <input
+                                    className="input"
+                                    placeholder="Alasan reject (wajib saat reject)"
+                                    style={{ flex: 1, maxWidth: 360 }}
+                                    value={rejectReason[p.id] ?? ''}
+                                    onChange={(e) => setRejectReason((r) => ({ ...r, [p.id]: e.target.value }))}
+                                  />
+                                  <button
+                                    className="btn btn-danger"
+                                    disabled={busyId === p.id || !(rejectReason[p.id]?.trim() ?? '')}
+                                    onClick={() => act(p.id, 'reject')}
+                                  >
+                                    Reject Payment
+                                  </button>
+                                  <button
+                                    className="btn btn-primary"
+                                    disabled={busyId === p.id}
+                                    onClick={() => act(p.id, 'approve')}
+                                  >
+                                    {busyId === p.id ? 'Memproses...' : 'APPROVE PAYMENT'}
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          );
-        })}
+          </div>
+        )}
       </div>
     </RequireAdmin>
   );

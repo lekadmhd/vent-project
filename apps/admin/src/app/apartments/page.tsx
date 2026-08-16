@@ -74,6 +74,7 @@ const CITY_OPTIONS = [
   'Jakarta Timur',
   'Tangerang',
   'Bekasi',
+  'Cikarang',
   'Depok',
   'Bogor',
   'Bandung',

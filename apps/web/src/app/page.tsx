@@ -44,7 +44,7 @@ const initialFilters: Filters = {
   lng: '',
 };
 
-const quickCities = ['Jakarta', 'Jakarta Selatan', 'Tangerang', 'Bekasi', 'BSD City', 'Depok'];
+const quickCities = ['Jakarta', 'Jakarta Selatan', 'Tangerang', 'Bekasi', 'Cikarang', 'BSD City', 'Depok'];
 
 const steps = [
   {
@@ -354,7 +354,7 @@ export default function HomePage() {
         </div>
         <div className="city-grid">
           {topCities.length === 0 &&
-            ['Jakarta', 'Tangerang', 'Bekasi', 'Depok', 'Bogor', 'Bandung'].map((c, i) => (
+            ['Jakarta', 'Tangerang', 'Bekasi', 'Cikarang', 'Depok', 'Bogor', 'Bandung'].map((c, i) => (
               <CityCard key={c} name={c} count="—" delay={i * 60} />
             ))}
           {topCities.map(([city, count], i) => (
