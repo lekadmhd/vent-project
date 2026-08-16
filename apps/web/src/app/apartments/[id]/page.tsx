@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';import { api } from '@/lib/api';
 import { fmtIdr } from '@/lib/format';
 import { useAuth } from '@/lib/auth';
@@ -84,27 +84,51 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
         className="card"
         style={{ overflow: 'hidden', padding: 0, marginBottom: 24 }}
       >
-        <div className="unit-media" style={{ height: 280 }}>
+        <div
+          className="unit-media"
+          style={{ height: 280 }}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           {apartment.image_urls && apartment.image_urls.length > 0 ? (
             <>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={apartment.image_urls[activeImg]} alt={apartment.title} className="unit-media-img" />
               <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 55%, rgba(14,42,71,0.75) 100%)' }} />
               {apartment.image_urls.length > 1 && (
-                <div className="gallery-thumbs">
-                  {apartment.image_urls.map((u, i) => (
-                    <button
-                      key={u + i}
-                      type="button"
-                      className={`gallery-thumb ${i === activeImg ? 'active' : ''}`}
-                      onClick={() => setActiveImg(i)}
-                      aria-label={`Foto ${i + 1}`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={u} alt="" />
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <button
+                    type="button"
+                    className="gallery-nav"
+                    onClick={() => goTo(-1)}
+                    aria-label="Foto sebelumnya"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    type="button"
+                    className="gallery-nav"
+                    onClick={() => goTo(1)}
+                    aria-label="Foto berikutnya"
+                  >
+                    ›
+                  </button>
+                  <div className="gallery-thumbs">
+                    {apartment.image_urls.map((u, i) => (
+                      <button
+                        key={u + i}
+                        type="button"
+                        className={`gallery-thumb ${i === activeImg ? 'active' : ''}`}
+                        onClick={() => setActiveImg(i)}
+                        aria-label={`Foto ${i + 1}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={u} alt="" />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="gallery-count">{activeImg + 1}/{apartment.image_urls.length}</span>
+                </>
               )}
             </>
           ) : (
