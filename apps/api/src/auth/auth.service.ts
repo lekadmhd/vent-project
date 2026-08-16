@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -8,7 +9,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
-import { LoginDto, RegisterDto } from './dto/auth.dto';
+import { ChangePasswordDto, LoginDto, RegisterDto } from './dto/auth.dto';
 import { AuditService } from '../audit/audit.service';
 import { AuditAction, UserRole } from '../common/types/enums';
 import { AuthUser } from '../common/decorators/current-user.decorator';
@@ -61,6 +62,25 @@ export class AuthService {
 
     await this.auditService.log(user.id, AuditAction.LOGIN, 'users:' + user.id, req);
     return this.buildAuthResponse(user);
+  }
+
+  async changePassword(user: AuthUser, dto: ChangePasswordDto, req: Request) {
+    const found = await this.userRepo.findOne({ where: { id: user.sub } });
+    if (!found || !(await bcrypt.compare(dto.old_password, found.password_hash))) {
+      throw new BadRequestException('Password lama salah');
+    }
+    if (dto.old_password === dto.new_password) {
+      throw new BadRequestException('Password baru harus berbeda dari password lama');
+    }
+    found.password_hash = await bcrypt.hash(dto.new_password, 10);
+    await this.userRepo.save(found);
+    await this.auditService.log(
+      user.sub,
+      'CHANGE_PASSWORD',
+      'users:' + user.sub,
+      req,
+    );
+    return { success: true };
   }
 
   private buildAuthResponse(user: User) {
