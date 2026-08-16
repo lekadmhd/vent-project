@@ -283,6 +283,7 @@ export default function ApartmentsPage() {
               <tr>
                 <th>Unit</th>
                 <th>Kota</th>
+                <th>Perabot</th>
                 <th>Sewa</th>
                 <th>Status</th>
                 <th>Aksi</th>
@@ -296,6 +297,7 @@ export default function ApartmentsPage() {
                     <div className="muted" style={{ fontSize: 12 }}>{a.complex_name} · Unit {a.unit_number}</div>
                   </td>
                   <td>{a.city}</td>
+                  <td>{a.furnishing === 'semi_furnished' ? 'Semi Furnish' : a.furnishing === 'furnished' ? 'Furnished' : 'Tanpa Perabot'}</td>
                   <td className="mono" style={{ color: 'var(--navy)', fontWeight: 600 }}>{fmtIdr(a.price_monthly)}</td>
                   <td><StatusBadge status={a.status} /></td>
                   <td>
@@ -370,6 +372,12 @@ export default function ApartmentsPage() {
                     <label>Kota</label>
                     <select className="select" value={form.city} onChange={(e) => set('city', e.target.value)}>
                       {CITY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+                  <div className="field">
+                    <label>Perabot</label>
+                    <select className="select" value={form.furnishing} onChange={(e) => set('furnishing', e.target.value)}>
+                      {FURNISH_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                     </select>
                   </div>
                   <div className="field" style={{ gridColumn: '1 / -1' }}>
