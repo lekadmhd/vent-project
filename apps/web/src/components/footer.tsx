@@ -44,18 +44,6 @@ export function Footer() {
               ))}
             </div>
           ))}
-          <div>
-            <h4>Keamanan</h4>
-            <p className="footer-about" style={{ marginTop: 0 }}>
-              AES-256-GCM Field Encryption
-              <br />
-              S3 Private Storage + Signed URL
-              <br />
-              Manual Finance Verification
-              <br />
-              Audit Trail Lengkap
-            </p>
-          </div>
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Venturra Homes — Enterprise Apartment Marketplace</span>
