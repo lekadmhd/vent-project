@@ -24,24 +24,21 @@ interface Apartment {
   price_monthly: string;
   deposit_amount: string;
   status: string;
+  furnishing: string;
 }
 
 interface Filters {
   city: string;
   max_price: string;
   bedrooms: string;
-  radius_km: string;
-  lat: string;
-  lng: string;
+  furnishing: string;
 }
 
 const initialFilters: Filters = {
   city: '',
   max_price: '',
   bedrooms: '',
-  radius_km: '',
-  lat: '',
-  lng: '',
+  furnishing: '',
 };
 
 const quickCities = ['Jakarta', 'Jakarta Selatan', 'Tangerang', 'Bekasi', 'Cikarang', 'BSD City', 'Depok'];
@@ -120,11 +117,7 @@ export default function HomePage() {
       if (next.city) params.set('city', next.city);
       if (next.max_price) params.set('max_price', next.max_price);
       if (next.bedrooms) params.set('bedrooms', next.bedrooms);
-      if (next.radius_km && next.lat && next.lng) {
-        params.set('radius_km', next.radius_km);
-        params.set('lat', next.lat);
-        params.set('lng', next.lng);
-      }
+      if (next.furnishing) params.set('furnishing', next.furnishing);
       const query = params.toString();
       const data = await api<Apartment[]>(`/apartments${query ? `?${query}` : ''}`);
       setApartments(data);
