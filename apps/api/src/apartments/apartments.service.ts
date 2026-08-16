@@ -242,11 +242,11 @@ export class ApartmentsService {
   }
 
   private async isOccupiedNow(apartmentId: string): Promise<boolean> {
+    const placeholders = OCCUPYING_BOOKING_STATUSES.map((_, i) => `$${i + 2}`).join(', ');
     const rows: { cnt: string }[] = await this.apartmentRepo.manager.query(
       `SELECT COUNT(*)::int AS cnt FROM bookings b
        WHERE b.apartment_id = $1
-         AND b.status IN ($2, $3, $4)
-         AND b.check_in <= CURRENT_DATE
+         AND b.status IN (${placeholders})
          AND b.check_out >= CURRENT_DATE`,
       [apartmentId, ...OCCUPYING_BOOKING_STATUSES],
     );
