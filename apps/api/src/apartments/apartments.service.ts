@@ -140,7 +140,6 @@ export class ApartmentsService {
           SELECT 1 FROM bookings b
           WHERE b.apartment_id = a.id
             AND b.status IN (:...occupiedStatuses)
-            AND b.check_in <= CURRENT_DATE
             AND b.check_out >= CURRENT_DATE
         )`,
         { occupiedStatuses: OCCUPYING_BOOKING_STATUSES },
