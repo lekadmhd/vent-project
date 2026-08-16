@@ -25,6 +25,7 @@ interface Apartment {
   deposit_amount: string;
   status: string;
   furnishing: string;
+  image_urls?: string[];
 }
 
 const amenities = ['Furnished Unit', 'CCTV 24 Jam', 'Security 24/7', 'Kolam Renang', 'Gym Center', 'Smart Door Lock'];
@@ -33,10 +34,14 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
   const { user } = useAuth();
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [error, setError] = useState('');
+  const [activeImg, setActiveImg] = useState(0);
 
   useEffect(() => {
     api<Apartment>(`/apartments/${params.id}`)
-      .then((found) => setApartment(found))
+      .then((found) => {
+        setApartment(found);
+        setActiveImg(0);
+      })
       .catch((e) => setError(e instanceof Error ? e.message : 'Unit tidak ditemukan'));
   }, [params.id]);
 
@@ -60,8 +65,34 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
         style={{ overflow: 'hidden', padding: 0, marginBottom: 24 }}
       >
         <div className="unit-media" style={{ height: 280 }}>
-          <BuildingArt seed={`${apartment.title}-${apartment.complex_name}-${apartment.id}`} />
-          <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(14,42,71,0.85) 100%)' }} />
+          {apartment.image_urls && apartment.image_urls.length > 0 ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={apartment.image_urls[activeImg]} alt={apartment.title} className="unit-media-img" />
+              <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 55%, rgba(14,42,71,0.75) 100%)' }} />
+              {apartment.image_urls.length > 1 && (
+                <div className="gallery-thumbs">
+                  {apartment.image_urls.map((u, i) => (
+                    <button
+                      key={u + i}
+                      type="button"
+                      className={`gallery-thumb ${i === activeImg ? 'active' : ''}`}
+                      onClick={() => setActiveImg(i)}
+                      aria-label={`Foto ${i + 1}`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={u} alt="" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <BuildingArt seed={`${apartment.title}-${apartment.complex_name}-${apartment.id}`} />
+              <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(14,42,71,0.85) 100%)' }} />
+            </>
+          )}
           <span className="badge success unit-badge">Terverifikasi</span>
           {apartment.furnishing !== 'unfurnished' && (
             <span className="unit-furnish-pill" style={{ top: 12, right: 12 }}>
