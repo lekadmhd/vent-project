@@ -356,7 +356,7 @@ export default function HomePage() {
             Temukan Apartemen di
           </h2>
           <p className="section-desc">
-            Jelajahi unit berdasarkan kota dengan jumlah listing real-time dari database.
+            Jelajahi unit berdasarkan kota dengan jumlah listing real-time.
           </p>
         </div>
         <div className="city-grid">
