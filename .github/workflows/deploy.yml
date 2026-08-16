@@ -32,10 +32,11 @@ jobs:
           command_timeout: 30m
           script: |
             set -e
-            if [ ! -d "${{ secrets.APP_DIR }}/.git" ]; then
-              git clone git@github.com:lekadmhd/vent-project.git ${{ secrets.APP_DIR }}
+            APP_DIR="${{ secrets.APP_DIR }}"
+            if [ ! -d "$APP_DIR/.git" ]; then
+              git clone git@github.com:lekadmhd/vent-project.git $APP_DIR
             fi
-            cd ${{ secrets.APP_DIR }}
+            cd $APP_DIR
             git fetch origin
             git reset --hard origin/main
             git clean -fd
@@ -51,13 +52,10 @@ jobs:
             echo "NEXT_PUBLIC_API_URL=http://${{ secrets.VPS_HOST }}:5000/api" > apps/admin/.env.local
             restart_or_start() {
               local name="$1" script="$2" cwd="$3" port="$4"
-              if pm2 describe "$name" >/dev/null 2>&1; then
-                pm2 restart "$name" --update-env
-              else
-                pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
-              fi
+              pm2 delete "$name" 2>/dev/null || true
+              pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
             }
-            restart_or_start aptrent-api apps/api/dist/main.js apps/api 5000
-            restart_or_start aptrent-web node_modules/.bin/next apps/web 3000
-            restart_or_start aptrent-admin node_modules/.bin/next apps/admin 3001
+            restart_or_start aptrent-api "$APP_DIR/apps/api/dist/main.js" "$APP_DIR/apps/api" 5000
+            restart_or_start aptrent-web "$APP_DIR/node_modules/.bin/next" "$APP_DIR/apps/web" 3000
+            restart_or_start aptrent-admin "$APP_DIR/node_modules/.bin/next" "$APP_DIR/apps/admin" 3001
             pm2 save

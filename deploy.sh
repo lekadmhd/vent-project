@@ -47,11 +47,8 @@ echo "Restarting apps with PM2..."
 
 restart_or_start() {
   local name="$1" script="$2" cwd="$3" port="$4"
-  if pm2 describe "$name" >/dev/null 2>&1; then
-    pm2 restart "$name" --update-env
-  else
-    pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
-  fi
+  pm2 delete "$name" 2>/dev/null || true
+  pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
 }
 
 restart_or_start aptrent-api "$APP_DIR/apps/api/dist/main.js" "$APP_DIR/apps/api" "$API_PORT"
