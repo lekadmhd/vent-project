@@ -709,6 +709,78 @@ a:hover {
   gap: 0 16px;
 }
 
+/* Image uploader & thumbnails */
+.img-thumb {
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 8px;
+}
+
+.img-cell {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--border);
+}
+
+.img-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.img-cover {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 2px 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.img-actions {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(10, 20, 40, 0.55);
+}
+
+.img-actions button {
+  flex: 1;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 4px 0;
+}
+
+.img-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.img-actions button:last-child {
+  background: rgba(214, 69, 80, 0.75);
+}
+
 /* Live chat bubbles (Bucket Admin) */
 .livechat-msg {
   padding: 9px 12px;

@@ -25,6 +25,7 @@ interface Apartment {
   deposit_amount: string;
   status: string;
   furnishing: string;
+  image_urls?: string[];
 }
 
 interface Filters {
@@ -299,7 +300,12 @@ export default function HomePage() {
               <Link href={`/apartments/${a.id}`} style={{ color: 'inherit', height: '100%', display: 'block' }}>
                 <article className="unit-card">
                   <div className="unit-media">
-                    <BuildingArt seed={`${a.title}-${a.complex_name}-${a.id}`} />
+                    {a.image_urls?.[0] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={a.image_urls[0]} alt={a.title} className="unit-media-img" />
+                    ) : (
+                      <BuildingArt seed={`${a.title}-${a.complex_name}-${a.id}`} />
+                    )}
                     <div className="unit-media-overlay" />
                     <span className="badge success unit-badge">Terverifikasi</span>
                     <span className="unit-price-pill">
