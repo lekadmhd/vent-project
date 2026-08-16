@@ -89,6 +89,11 @@ export function Navbar() {
               <Link href="/bookings" className="nav-mobile-link" onClick={() => setOpen(false)}>
                 Bookings Saya
               </Link>
+              {user.role === 'landlord' && (
+                <Link href="/landlord" className="nav-mobile-link" onClick={() => setOpen(false)}>
+                  Panel Landlord
+                </Link>
+              )}
               <button
                 className="btn nav-mobile-link"
                 style={{ width: '100%', justifyContent: 'flex-start', background: 'transparent', border: 'none', padding: 0 }}
