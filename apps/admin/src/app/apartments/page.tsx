@@ -24,6 +24,7 @@ interface ApartmentRow {
   latitude: string;
   longitude: string;
   furnishing: string;
+  image_urls?: string[];
 }
 
 interface ApartmentForm {
@@ -143,6 +144,7 @@ export default function ApartmentsPage() {
       deposit_amount: String(Math.round(parseFloat(a.deposit_amount))),
       status: a.status,
       furnishing: a.furnishing,
+      image_urls: a.image_urls ?? [],
     });
     setModal('edit');
   };
@@ -167,6 +169,7 @@ export default function ApartmentsPage() {
       deposit_amount: Number(form.deposit_amount),
       status: form.status,
       furnishing: form.furnishing,
+      image_urls: form.image_urls,
     };
     try {
       if (modal === 'edit' && editingId) {
