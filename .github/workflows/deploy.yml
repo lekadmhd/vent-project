@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci || npm install
 
-      - name: Build API
+      - name: Build all apps
         run: npm run build
 
       - name: SSH into VPS and deploy
@@ -37,13 +37,22 @@ jobs:
             git pull origin main
             npm ci || npm install
             npm run build
+            bash database/bootstrap_vps.sh
             if [ ! -f apps/api/.env ]; then
               cp apps/api/.env.example apps/api/.env
-              echo "WARNING: .env created from template on VPS"
+              echo "WARNING: API .env created from template on VPS"
             fi
-            if pm2 describe aptrent-api >/dev/null 2>&1; then
-              pm2 restart aptrent-api --update-env
-            else
-              pm2 start apps/api/dist/main.js --name aptrent-api --cwd apps/api
-            fi
+            echo "NEXT_PUBLIC_API_URL=http://${{ secrets.VPS_HOST }}:5000/api" > apps/web/.env.local
+            echo "NEXT_PUBLIC_API_URL=http://${{ secrets.VPS_HOST }}:5000/api" > apps/admin/.env.local
+            restart_or_start() {
+              local name="$1" script="$2" cwd="$3" port="$4"
+              if pm2 describe "$name" >/dev/null 2>&1; then
+                pm2 restart "$name" --update-env
+              else
+                pm2 start "$script" --name "$name" --cwd "$cwd" -- start -p "$port"
+              fi
+            }
+            restart_or_start aptrent-api apps/api/dist/main.js apps/api 5000
+            restart_or_start aptrent-web node_modules/.bin/next apps/web 3000
+            restart_or_start aptrent-admin node_modules/.bin/next apps/admin 3001
             pm2 save

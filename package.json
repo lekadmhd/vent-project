@@ -7,8 +7,10 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace @aptrent/api",
-    "dev": "npm run start:dev --workspace @aptrent/api",
+    "build": "npm run build --workspaces",
+    "dev:api": "npm run start:dev --workspace @aptrent/api",
+    "dev:web": "npm run dev --workspace @aptrent/web",
+    "dev:admin": "npm run dev --workspace @aptrent/admin",
     "start": "npm run start:prod --workspace @aptrent/api",
     "typecheck": "npm run typecheck --workspace @aptrent/api",
     "lint": "npm run lint --workspace @aptrent/api"

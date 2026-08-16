@@ -104,6 +104,12 @@ export class ApartmentsService {
     });
   }
 
+  async listAll(): Promise<Apartment[]> {
+    return this.apartmentRepo.find({
+      order: { created_at: 'DESC' },
+    });
+  }
+
   async moderate(
     actor: AuthUser,
     id: string,
@@ -131,6 +137,16 @@ export class ApartmentsService {
     });
     if (!apartment) {
       throw new NotFoundException('Active apartment not found');
+    }
+    return apartment;
+  }
+
+  async findActiveById(id: string): Promise<Apartment> {
+    const apartment = await this.apartmentRepo.findOne({
+      where: { id, status: PropertyStatus.ACTIVE },
+    });
+    if (!apartment) {
+      throw new NotFoundException('Apartment not found');
     }
     return apartment;
   }

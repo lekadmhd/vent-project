@@ -27,6 +27,18 @@ export class ApartmentsController {
     return this.apartmentsService.search(filters);
   }
 
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPPORT_ADMIN, UserRole.SUPER_ADMIN)
+  async adminAll() {
+    return this.apartmentsService.listAll();
+  }
+
+  @Get(':id')
+  async detail(@Param('id') id: string) {
+    return this.apartmentsService.findActiveById(id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.LANDLORD, UserRole.SUPER_ADMIN)
