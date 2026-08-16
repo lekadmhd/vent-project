@@ -122,6 +122,23 @@ export default function BookPage({ params }: { params: { id: string } }) {
   }
 
   if (!booking) {
+    if (apartment?.occupied) {
+      return (
+        <div className="card" style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+          <h1 className="title" style={{ marginBottom: 12 }}>
+            Unit Sudah Tersewa
+          </h1>
+          <p className="muted" style={{ marginBottom: 24 }}>
+            {apartment.complex_name} · Unit {apartment.unit_number} sedang dalam masa sewa.
+            Silakan pilih unit lain yang tersedia.
+          </p>
+          <Link href="/#search" className="btn btn-primary">
+            Cari Unit Lain
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className="card" style={{ maxWidth: 560, margin: '0 auto' }}>
         <h1 className="title" style={{ marginBottom: 8 }}>
