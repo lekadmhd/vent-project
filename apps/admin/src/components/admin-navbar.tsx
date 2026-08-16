@@ -24,7 +24,7 @@ export function AdminNavbar() {
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
-          APTRENT<span>//ADMIN</span>
+          VENTURRA HOMES<span>//ADMIN</span>
         </Link>
 
         <div className="nav-links">

@@ -38,7 +38,7 @@ export default function RegisterPage() {
     <div className="container" style={{ maxWidth: 460 }}>
       <div className="card">
         <h1 className="title" style={{ marginBottom: 24 }}>
-          Daftar <span style={{ color: 'var(--accent)' }}>AptRent</span>
+          Daftar <span style={{ color: 'var(--accent)' }}>Venturra Homes</span>
         </h1>
         {error && <div className="error">{error}</div>}
         <form onSubmit={onSubmit}>

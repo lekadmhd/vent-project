@@ -10,8 +10,8 @@ const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space
 const jetBrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono-gf', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'AptRent — Platform Sewa Apartemen',
-  description: 'AptRent v4.0 - Enterprise apartment rental platform',
+  title: 'Venturra Homes — Platform Sewa Apartemen',
+  description: 'Venturra Homes - Enterprise apartment rental platform',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

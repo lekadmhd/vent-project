@@ -223,7 +223,7 @@ export default function HomePage() {
                     doSearch({ ...filters, city: filters.city === c ? '' : c });
                     resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  style={filters.city === c ? { color: 'var(--accent)', borderColor: 'rgba(0,240,255,0.4)' } : undefined}
+                  style={filters.city === c ? { color: 'var(--accent)', borderColor: 'rgba(184,134,11,0.5)' } : undefined}
                 >
                   {c}
                 </button>
@@ -254,7 +254,7 @@ export default function HomePage() {
         </div>
 
         <div className="hero-skyline">
-          <BuildingArt variant="skyline" seed="aptrent-skyline" />
+          <BuildingArt variant="skyline" seed="venturra-skyline" />
         </div>
       </section>
 
@@ -275,7 +275,7 @@ export default function HomePage() {
           <div className="grid grid-3">
             {[1, 2, 3].map((n) => (
               <div key={n} className="unit-card" style={{ height: 320 }}>
-                <div className="unit-media" style={{ background: 'rgba(255,255,255,0.03)' }} />
+                <div className="unit-media" style={{ background: 'rgba(14,42,71,0.04)' }} />
                 <div className="unit-body" style={{ gap: 12 }}>
                   <div className="skeleton-line" style={{ width: '70%' }} />
                   <div className="skeleton-line" style={{ width: '50%' }} />
@@ -398,7 +398,7 @@ export default function HomePage() {
         <div className="section-head">
           <div className="section-kicker">Zero-Trust Architecture</div>
           <h2 className="section-title" style={{ fontSize: 30 }}>
-            Mengapa Memilih AptRent
+            Mengapa Memilih Venturra Homes
           </h2>
           <p className="section-desc">
             Arsitektur keamanan berlapis untuk melindungi data pribadi dan dana Anda.
@@ -411,7 +411,7 @@ export default function HomePage() {
                 <div className="feature-icon">
                   {idx === 0 ? <LockIcon size={22} /> : <ShieldIcon size={22} />}
                 </div>
-                <span className="chip" style={{ borderColor: 'rgba(0,240,255,0.3)', color: 'var(--accent)', marginBottom: 14 }}>
+                <span className="chip" style={{ borderColor: 'rgba(184,134,11,0.35)', color: 'var(--accent)', marginBottom: 14 }}>
                   {f.tag}
                 </span>
                 <h3 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 16, marginBottom: 8 }}>{f.title}</h3>

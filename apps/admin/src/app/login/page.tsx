@@ -33,7 +33,7 @@ export default function AdminLoginPage() {
           Admin <span style={{ color: 'var(--accent)' }}>Control Center</span>
         </h1>
         <p className="muted" style={{ fontSize: 13, marginBottom: 24 }}>
-          Central System Node — akses terbatas untuk staff AptRent.
+          Central System Node — akses terbatas untuk staff Venturra Homes.
         </p>
         {error && <div className="error">{error}</div>}
         <form onSubmit={onSubmit}>

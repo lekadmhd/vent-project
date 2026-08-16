@@ -56,7 +56,7 @@ export function TestimonialCarousel() {
       <div className="testimonial-body" key={idx} style={{ animation: 'wordIn 0.5s ease' }}>
         <p className="testimonial-quote">{t.quote}</p>
         <div className="row" style={{ justifyContent: 'center', gap: 10 }}>
-          <span className="chip" style={{ borderColor: 'rgba(0,240,255,0.35)', color: 'var(--accent)' }}>
+          <span className="chip" style={{ borderColor: 'rgba(184,134,11,0.35)', color: 'var(--accent)' }}>
             {t.highlight}
           </span>
         </div>

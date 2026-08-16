@@ -61,7 +61,7 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
       >
         <div className="unit-media" style={{ height: 280 }}>
           <BuildingArt seed={`${apartment.title}-${apartment.complex_name}-${apartment.id}`} />
-          <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(10,14,23,0.95) 100%)' }} />
+          <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(14,42,71,0.85) 100%)' }} />
           <span className="badge success unit-badge">Terverifikasi</span>
           <span className="unit-price-pill" style={{ bottom: 16, right: 18, fontSize: 16 }}>
             {fmtIdr(apartment.price_monthly)}<span style={{ fontSize: 11, fontWeight: 500 }}>/bulan</span>

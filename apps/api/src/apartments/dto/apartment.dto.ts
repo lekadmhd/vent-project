@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsLatitude,
   IsLongitude,
@@ -8,6 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { PropertyStatus } from '../../common/types/enums';
 
 export class CreateApartmentDto {
   @IsString()
@@ -56,6 +58,72 @@ export class CreateApartmentDto {
   @IsNumber()
   @Min(0)
   deposit_amount: number;
+
+  @IsEnum(PropertyStatus)
+  @IsOptional()
+  status?: PropertyStatus;
+}
+
+export class UpdateApartmentDto {
+  @IsString()
+  @IsOptional()
+  title?: string;
+
+  @IsString()
+  @IsOptional()
+  complex_name?: string;
+
+  @IsString()
+  @IsOptional()
+  unit_number?: string;
+
+  @IsString()
+  @IsOptional()
+  tower?: string;
+
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  bedroom_count?: number;
+
+  @IsInt()
+  @Min(0)
+  @IsOptional()
+  bathroom_count?: number;
+
+  @IsNumber()
+  @IsOptional()
+  size_sqm?: number;
+
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @IsString()
+  @IsOptional()
+  city?: string;
+
+  @IsLatitude()
+  @IsOptional()
+  latitude?: number;
+
+  @IsLongitude()
+  @IsOptional()
+  longitude?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  price_monthly?: number;
+
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  deposit_amount?: number;
+
+  @IsEnum(PropertyStatus)
+  @IsOptional()
+  status?: PropertyStatus;
 }
 
 export class SearchApartmentDto {

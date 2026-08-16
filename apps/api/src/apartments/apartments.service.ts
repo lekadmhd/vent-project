@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, FindOptionsWhere, Repository } from 'typeorm';
 import { Request } from 'express';
 import { Apartment } from './entities/apartment.entity';
-import { CreateApartmentDto, SearchApartmentDto } from './dto/apartment.dto';
+import { CreateApartmentDto, SearchApartmentDto, UpdateApartmentDto } from './dto/apartment.dto';
 import { AuditService } from '../audit/audit.service';
 import {
   AuditAction,
@@ -26,7 +26,14 @@ export class ApartmentsService {
     private readonly auditService: AuditService,
   ) {}
 
-  async create(landlord: AuthUser, dto: CreateApartmentDto): Promise<Apartment> {
+  async create(
+    landlord: AuthUser,
+    dto: CreateApartmentDto,
+    req: Request,
+  ): Promise<Apartment> {
+    const isAdmin =
+      landlord.role === UserRole.SUPPORT_ADMIN ||
+      landlord.role === UserRole.SUPER_ADMIN;
     const apartment = this.apartmentRepo.create({
       landlord_id: landlord.sub,
       title: dto.title,
@@ -43,9 +50,62 @@ export class ApartmentsService {
       longitude: String(dto.longitude),
       price_monthly: String(dto.price_monthly),
       deposit_amount: String(dto.deposit_amount),
-      status: PropertyStatus.PENDING_APPROVAL,
+      status: isAdmin
+        ? (dto.status ?? PropertyStatus.ACTIVE)
+        : PropertyStatus.PENDING_APPROVAL,
     });
-    return this.apartmentRepo.save(apartment);
+    const saved = await this.apartmentRepo.save(apartment);
+    await this.auditService.log(
+      landlord.sub,
+      'CREATE_PROPERTY',
+      'apartments:' + saved.id,
+      req,
+    );
+    return saved;
+  }
+
+  async update(
+    actor: AuthUser,
+    id: string,
+    dto: UpdateApartmentDto,
+    req: Request,
+  ): Promise<Apartment> {
+    const apartment = await this.findOrFail(id);
+
+    if (dto.title != null) apartment.title = dto.title;
+    if (dto.complex_name != null) apartment.complex_name = dto.complex_name;
+    if (dto.unit_number != null) apartment.unit_number = dto.unit_number;
+    if (dto.tower !== undefined) apartment.tower = dto.tower;
+    if (dto.bedroom_count != null) apartment.bedroom_count = dto.bedroom_count;
+    if (dto.bathroom_count != null) apartment.bathroom_count = dto.bathroom_count;
+    if (dto.size_sqm != null) apartment.size_sqm = String(dto.size_sqm);
+    if (dto.address != null) apartment.address = dto.address;
+    if (dto.city != null) apartment.city = dto.city;
+    if (dto.latitude != null) apartment.latitude = String(dto.latitude);
+    if (dto.longitude != null) apartment.longitude = String(dto.longitude);
+    if (dto.price_monthly != null) apartment.price_monthly = String(dto.price_monthly);
+    if (dto.deposit_amount != null) apartment.deposit_amount = String(dto.deposit_amount);
+    if (dto.status != null) apartment.status = dto.status;
+
+    const saved = await this.apartmentRepo.save(apartment);
+    await this.auditService.log(
+      actor.sub,
+      'UPDATE_PROPERTY',
+      'apartments:' + id,
+      req,
+    );
+    return saved;
+  }
+
+  async remove(actor: AuthUser, id: string, req: Request): Promise<void> {
+    const apartment = await this.findOrFail(id);
+    await this.apartmentRepo.remove(apartment);
+    await this.auditService.log(
+      actor.sub,
+      'DELETE_PROPERTY',
+      'apartments:' + id,
+      req,
+    );
   }
 
   async search(filters: SearchApartmentDto): Promise<Apartment[]> {

@@ -28,7 +28,7 @@ interface Booking {
   status: string;
 }
 
-const PLATFORM_BANK = 'BCA 1234567890 a.n. PT AptRent (Escrow)';
+const PLATFORM_BANK = 'BCA 1234567890 a.n. PT Venturra Homes (Escrow)';
 
 export default function BookPage({ params }: { params: { id: string } }) {
   const token = getToken();

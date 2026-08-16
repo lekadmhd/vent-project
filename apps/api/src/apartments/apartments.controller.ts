@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -16,7 +17,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AuthUser, CurrentUser } from '../common/decorators/current-user.decorator';
 import { UserRole, PropertyStatus } from '../common/types/enums';
-import { CreateApartmentDto, SearchApartmentDto } from './dto/apartment.dto';
+import { CreateApartmentDto, SearchApartmentDto, UpdateApartmentDto } from './dto/apartment.dto';
 
 @Controller('apartments')
 export class ApartmentsController {
@@ -41,12 +42,37 @@ export class ApartmentsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.LANDLORD, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.LANDLORD, UserRole.SUPPORT_ADMIN, UserRole.SUPER_ADMIN)
   async create(
     @CurrentUser() landlord: AuthUser,
     @Body() dto: CreateApartmentDto,
+    @Req() req: Request,
   ) {
-    return this.apartmentsService.create(landlord, dto);
+    return this.apartmentsService.create(landlord, dto, req);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPPORT_ADMIN, UserRole.SUPER_ADMIN)
+  async update(
+    @CurrentUser() actor: AuthUser,
+    @Param('id') id: string,
+    @Body() dto: UpdateApartmentDto,
+    @Req() req: Request,
+  ) {
+    return this.apartmentsService.update(actor, id, dto, req);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.SUPPORT_ADMIN, UserRole.SUPER_ADMIN)
+  async remove(
+    @CurrentUser() actor: AuthUser,
+    @Param('id') id: string,
+    @Req() req: Request,
+  ) {
+    await this.apartmentsService.remove(actor, id, req);
+    return { success: true };
   }
 
   @Get('mine')

@@ -31,7 +31,7 @@ export default function LoginPage() {
     <div className="container" style={{ maxWidth: 440 }}>
       <div className="card">
         <h1 className="title" style={{ marginBottom: 24 }}>
-          Masuk <span style={{ color: 'var(--accent)' }}>AptRent</span>
+          Masuk <span style={{ color: 'var(--accent)' }}>Venturra Homes</span>
         </h1>
         {error && <div className="error">{error}</div>}
         <form onSubmit={onSubmit}>

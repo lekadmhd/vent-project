@@ -28,7 +28,7 @@ export function Navbar() {
     <nav className="navbar">
       <div className="container navbar-inner">
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
-          APTRENT<span>//v4</span>
+          VENTURRA HOMES<span>//v4</span>
         </Link>
 
         <div className="nav-links">

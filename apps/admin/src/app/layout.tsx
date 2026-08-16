@@ -4,8 +4,8 @@ import { AuthProvider } from '@/lib/auth';
 import { AdminNavbar } from '@/components/admin-navbar';
 
 export const metadata: Metadata = {
-  title: 'AptRent Admin — Control Center',
-  description: 'AptRent v4.0 Admin & Finance Panel',
+  title: 'Venturra Homes Admin — Control Center',
+  description: 'Venturra Homes Admin & Finance Panel',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

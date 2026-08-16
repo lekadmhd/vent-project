@@ -15,7 +15,7 @@ const columns = [
     links: [
       { label: 'Login', href: '/login' },
       { label: 'Bookings Saya', href: '/bookings' },
-      { label: 'Admin Panel', href: 'http://localhost:3001' },
+      { label: 'Admin Panel', href: 'http://203.194.115.168:3001' },
     ],
   },
 ];
@@ -27,7 +27,7 @@ export function Footer() {
         <div className="footer-grid">
           <div>
             <div className="footer-brand">
-              APTRENT<span>//v4</span>
+              VENTURRA HOMES<span>//v4</span>
             </div>
             <p className="footer-about">
               Platform sewa unit apartemen enterprise dengan escrow berlapis, enkripsi data
@@ -58,7 +58,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} AptRent System v4.0 — Enterprise Apartment Marketplace</span>
+          <span>© {new Date().getFullYear()} Venturra Homes — Enterprise Apartment Marketplace</span>
           <span className="mono">ENCRYPTED · ZERO-TRUST · VERIFIED</span>
         </div>
       </div>
