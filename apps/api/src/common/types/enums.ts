@@ -38,6 +38,18 @@ export enum PaymentVerificationStatus {
   REJECTED_INVALID = 'rejected_invalid',
 }
 
+export enum FurnishingStatus {
+  UNFURNISHED = 'unfurnished',
+  SEMI_FURNISHED = 'semi_furnished',
+  FURNISHED = 'furnished',
+}
+
+export enum LeadStatus {
+  NEW = 'new',
+  CONTACTED = 'contacted',
+  CLOSED = 'closed',
+}
+
 export enum AuditAction {
   VIEW_DECRYPTED_KYC = 'VIEW_DECRYPTED_KYC',
   APPROVE_MANUAL_PAYMENT = 'APPROVE_MANUAL_PAYMENT',

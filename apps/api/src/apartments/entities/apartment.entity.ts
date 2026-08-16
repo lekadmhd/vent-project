@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PropertyStatus } from '../../common/types/enums';
+import { FurnishingStatus, PropertyStatus } from '../../common/types/enums';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('apartments')
@@ -65,6 +65,9 @@ export class Apartment {
 
   @Column({ type: 'enum', enum: PropertyStatus, default: PropertyStatus.PENDING_APPROVAL })
   status: PropertyStatus;
+
+  @Column({ type: 'enum', enum: FurnishingStatus, default: FurnishingStatus.UNFURNISHED })
+  furnishing: FurnishingStatus;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
