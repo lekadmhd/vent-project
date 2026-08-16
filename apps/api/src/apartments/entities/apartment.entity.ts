@@ -69,6 +69,12 @@ export class Apartment {
   @Column({ type: 'enum', enum: FurnishingStatus, default: FurnishingStatus.UNFURNISHED })
   furnishing: FurnishingStatus;
 
+  @Column({ name: 'image_url', type: 'text', nullable: true })
+  image_url: string | null;
+
+  @Column({ name: 'image_urls', type: 'text', array: true, default: () => "'{}'" })
+  image_urls: string[];
+
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 }
