@@ -53,12 +53,12 @@ const steps = [
   {
     n: '02',
     title: 'Booking & Transfer',
-    desc: 'Sistem menerbitkan invoice dengan kode unik. Transfer ke rekening escrow resmi platform.',
+    desc: 'Sistem menerbitkan invoice dengan kode unik. Transfer ke rekening & QRIS resmi platform.',
   },
   {
     n: '03',
     title: 'Verifikasi Finance',
-    desc: 'Finance Admin memverifikasi bukti transfer secara manual 2-layer sebelum dana masuk escrow.',
+    desc: 'Transaksi mudah dengan QRIS.',
   },
 ];
 
@@ -69,14 +69,9 @@ const trustFeatures = [
     tag: 'PRIVACY',
   },
   {
-    title: 'Escrow Berlapis',
-    desc: 'Dana tenant diamankan di escrow dan hanya dilepas setelah verifikasi ketat & check-in.',
+    title: 'Kemudahan akses',
+    desc: 'Akses data dan layanan yang mudah dan cepat.',
     tag: 'TRUST',
-  },
-  {
-    title: 'Verifikasi Manual 2-Layer',
-    desc: 'Setiap pembayaran dicek oleh Finance Admin — nominal, kode unik, dan mutasi rekening.',
-    tag: 'COMPLIANCE',
   },
   {
     title: 'Audit Trail Lengkap',
@@ -86,11 +81,6 @@ const trustFeatures = [
 ];
 
 const marqueeItems = [
-  'AES-256-GCM',
-  'S3 Private Storage',
-  'Signed URL 15 Menit',
-  'Escrow Berlapis',
-  'Verifikasi Finance 2-Layer',
   'Audit Trail Lengkap',
   'KYC Terenkripsi',
   'Watermark Otomatis',
@@ -463,7 +453,7 @@ export default function HomePage() {
             Siap Menyewa Apartemen Impian Anda?
           </h2>
           <p className="muted" style={{ maxWidth: 520, margin: '0 auto 28px', fontSize: 15, lineHeight: 1.65 }}>
-            Daftar gratis, booking unit, dan nikmati proses yang transparan dengan jaminan escrow enterprise.
+            Daftar gratis, booking unit, dan nikmati proses yang transparan.
           </p>
           <div className="hero-cta" style={{ marginBottom: 0 }}>
             <Link href="/register" className="btn btn-primary btn-lg">
