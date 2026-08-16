@@ -161,7 +161,7 @@ export default function HomePage() {
             Sewa Apartemen Premium,
             <br />
             <span className="gradient-text">
-              <RotatingWords words={['Aman & Transparan', 'Cepat & Mudah', 'Terverifikasi', 'Escrow Berlapis']} />
+              <RotatingWords words={['Aman & Transparan', 'Cepat & Mudah', 'Terverifikasi']} />
             </span>
           </h1>
           <p className="hero-sub">
@@ -373,7 +373,7 @@ export default function HomePage() {
             Bagaimana Cara Kerja
           </h2>
           <p className="section-desc">
-            Alur booking enterprise dengan escrow berlapis dan verifikasi manual oleh Finance Admin.
+            Alur booking enterprise dengan mudah dan cepat.
           </p>
         </div>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
