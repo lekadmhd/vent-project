@@ -29,7 +29,7 @@ export function Navbar() {
       <div className="container navbar-inner">
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
           VENTURRA HOMES
-        </Link>
+        </Link> 
 
         <div className="nav-links">
           {navLinks.map((l) => (
