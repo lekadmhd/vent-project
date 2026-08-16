@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/lib/auth';
-import { AdminNavbar } from '@/components/admin-navbar';
+import { AdminSidebar } from '@/components/admin-sidebar';
 
 export const metadata: Metadata = {
   title: 'Venturra Homes Admin — Control Center',
@@ -13,10 +13,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="id">
       <body>
         <AuthProvider>
-          <AdminNavbar />
-          <main className="container" style={{ paddingTop: 48, paddingBottom: 80 }}>
-            {children}
-          </main>
+          <div className="admin-shell">
+            <AdminSidebar />
+            <main className="admin-main">
+              <div className="container">{children}</div>
+            </main>
+          </div>
         </AuthProvider>
       </body>
     </html>
