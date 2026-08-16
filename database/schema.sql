@@ -113,7 +113,7 @@ CREATE INDEX idx_manual_payments_tenant ON manual_payments(tenant_id);
 -- ================================================================
 CREATE TABLE security_audit_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    actor_id UUID NOT NULL REFERENCES users(id),
+    actor_id UUID, -- nullable: memungkinkan pencatatan aksi anonim (mis. LOGIN_FAILED tanpa user dikenal)
     action VARCHAR(255) NOT NULL, -- e.g., "VIEW_DECRYPTED_KYC", "APPROVE_MANUAL_PAYMENT"
     target_resource VARCHAR(255) NOT NULL,
     ip_address VARCHAR(45) NOT NULL,
