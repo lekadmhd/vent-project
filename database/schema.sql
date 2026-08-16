@@ -12,6 +12,8 @@ CREATE TYPE kyc_status AS ENUM ('unverified', 'pending', 'approved', 'rejected')
 CREATE TYPE property_status AS ENUM ('draft', 'pending_approval', 'active', 'rejected', 'suspended');
 CREATE TYPE booking_status AS ENUM ('pending_payment', 'pending_finance_approval', 'paid_in_escrow', 'checked_in', 'completed', 'cancelled', 'disputed');
 CREATE TYPE payment_verification_status AS ENUM ('waiting_submission', 'pending_review', 'verified_approved', 'rejected_invalid');
+CREATE TYPE furnishing_status AS ENUM ('unfurnished', 'semi_furnished', 'furnished');
+CREATE TYPE lead_status AS ENUM ('new', 'contacted', 'closed');
 
 -- ================================================================
 -- 2. USERS TABLE WITH ENCRYPTED PII
@@ -53,6 +55,7 @@ CREATE TABLE apartments (
     price_monthly DECIMAL(12, 2) NOT NULL,
     deposit_amount DECIMAL(12, 2) NOT NULL,
     status property_status DEFAULT 'pending_approval',
+    furnishing furnishing_status DEFAULT 'unfurnished',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -137,4 +140,33 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_users_set_updated_at
 BEFORE UPDATE ON users
+FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
+
+-- ================================================================
+-- 7. LEADS (BUCKET ADMIN) & LIVE CHAT
+-- ================================================================
+CREATE TABLE leads (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    address TEXT NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    status lead_status DEFAULT 'new',
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE chat_messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lead_id UUID NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
+    sender VARCHAR(10) NOT NULL, -- 'guest' | 'admin'
+    body TEXT NOT NULL,
+    read_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_chat_messages_lead ON chat_messages(lead_id, created_at);
+
+CREATE TRIGGER trg_leads_set_updated_at
+BEFORE UPDATE ON leads
 FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at();
