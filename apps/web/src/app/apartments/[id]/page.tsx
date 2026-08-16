@@ -35,6 +35,26 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
   const [apartment, setApartment] = useState<Apartment | null>(null);
   const [error, setError] = useState('');
   const [activeImg, setActiveImg] = useState(0);
+  const touchStartX = useRef(0);
+
+  const goTo = (dir: -1 | 1) => {
+    if (!apartment?.image_urls?.length) return;
+    setActiveImg(
+      (prev) =>
+        (prev + dir + apartment.image_urls!.length) % apartment.image_urls!.length,
+    );
+  };
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!apartment?.image_urls?.length) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (delta < -40) goTo(1);
+    else if (delta > 40) goTo(-1);
+  };
 
   useEffect(() => {
     api<Apartment>(`/apartments/${params.id}`)

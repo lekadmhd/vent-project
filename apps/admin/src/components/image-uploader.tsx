@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -28,6 +28,8 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
   const [ready, setReady] = useState(false);
   const [opening, setOpening] = useState(false);
   const [error, setError] = useState('');
+  const imagesRef = useRef(images);
+  imagesRef.current = images;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -60,7 +62,9 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
       (_error, result) => {
         setOpening(false);
         if (!_error && result?.event === 'success' && result.info?.secure_url) {
-          onChange([...images, result.info.secure_url]);
+          const next = [...imagesRef.current, result.info.secure_url];
+          onChange(next);
+          imagesRef.current = next;
         }
       },
     );
