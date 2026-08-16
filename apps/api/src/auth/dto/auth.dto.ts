@@ -31,3 +31,12 @@ export class LoginDto {
   @IsString()
   password: string;
 }
+
+export class ChangePasswordDto {
+  @IsString()
+  old_password: string;
+
+  @IsString()
+  @MinLength(6)
+  new_password: string;
+}

@@ -11,6 +11,7 @@ import { CreateApartmentDto, SearchApartmentDto, UpdateApartmentDto } from './dt
 import { AuditService } from '../audit/audit.service';
 import {
   AuditAction,
+  FurnishingStatus,
   PropertyStatus,
   UserRole,
 } from '../common/types/enums';
@@ -53,6 +54,7 @@ export class ApartmentsService {
       status: isAdmin
         ? (dto.status ?? PropertyStatus.ACTIVE)
         : PropertyStatus.PENDING_APPROVAL,
+      furnishing: dto.furnishing ?? FurnishingStatus.UNFURNISHED,
     });
     const saved = await this.apartmentRepo.save(apartment);
     await this.auditService.log(
@@ -86,6 +88,7 @@ export class ApartmentsService {
     if (dto.price_monthly != null) apartment.price_monthly = String(dto.price_monthly);
     if (dto.deposit_amount != null) apartment.deposit_amount = String(dto.deposit_amount);
     if (dto.status != null) apartment.status = dto.status;
+    if (dto.furnishing != null) apartment.furnishing = dto.furnishing;
 
     const saved = await this.apartmentRepo.save(apartment);
     await this.auditService.log(
@@ -125,6 +128,9 @@ export class ApartmentsService {
     }
     if (filters.bedrooms) {
       qb.andWhere('a.bedroom_count = :bedrooms', { bedrooms: filters.bedrooms });
+    }
+    if (filters.furnishing) {
+      qb.andWhere('a.furnishing = :furnishing', { furnishing: filters.furnishing });
     }
     if (filters.min_price != null) {
       qb.andWhere('CAST(a.price_monthly AS numeric) >= :min', { min: filters.min_price });

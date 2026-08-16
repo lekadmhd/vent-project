@@ -9,7 +9,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { PropertyStatus } from '../../common/types/enums';
+import { FurnishingStatus, PropertyStatus } from '../../common/types/enums';
 
 export class CreateApartmentDto {
   @IsString()
@@ -62,6 +62,10 @@ export class CreateApartmentDto {
   @IsEnum(PropertyStatus)
   @IsOptional()
   status?: PropertyStatus;
+
+  @IsEnum(FurnishingStatus)
+  @IsOptional()
+  furnishing?: FurnishingStatus;
 }
 
 export class UpdateApartmentDto {
@@ -124,6 +128,10 @@ export class UpdateApartmentDto {
   @IsEnum(PropertyStatus)
   @IsOptional()
   status?: PropertyStatus;
+
+  @IsEnum(FurnishingStatus)
+  @IsOptional()
+  furnishing?: FurnishingStatus;
 }
 
 export class SearchApartmentDto {
