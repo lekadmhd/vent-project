@@ -27,6 +27,9 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            if [ ! -d "${{ secrets.APP_DIR }}/.git" ]; then
+              git clone git@github.com:lekadmhd/vent-project.git ${{ secrets.APP_DIR }}
+            fi
             cd ${{ secrets.APP_DIR }}
             git pull origin main
             npm ci --omit=dev || npm install
