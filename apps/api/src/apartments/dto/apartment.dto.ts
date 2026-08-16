@@ -159,6 +159,10 @@ export class SearchApartmentDto {
   @IsOptional()
   lng?: number;
 
+  @IsEnum(FurnishingStatus)
+  @IsOptional()
+  furnishing?: FurnishingStatus;
+
   @IsNumber()
   @Min(1)
   @Max(100)
