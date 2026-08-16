@@ -11,6 +11,7 @@ import { CreateApartmentDto, SearchApartmentDto, UpdateApartmentDto } from './dt
 import { AuditService } from '../audit/audit.service';
 import {
   AuditAction,
+  BookingStatus,
   FurnishingStatus,
   PropertyStatus,
   UserRole,
@@ -18,6 +19,11 @@ import {
 import { AuthUser } from '../common/decorators/current-user.decorator';
 
 const EARTH_RADIUS_KM = 6371;
+const OCCUPYING_BOOKING_STATUSES = [
+  BookingStatus.PENDING_FINANCE_APPROVAL,
+  BookingStatus.PAID_IN_ESCROW,
+  BookingStatus.CHECKED_IN,
+];
 
 @Injectable()
 export class ApartmentsService {
@@ -127,7 +133,17 @@ export class ApartmentsService {
 
     let qb = this.apartmentRepo
       .createQueryBuilder('a')
-      .where('a.status = :status', { status: PropertyStatus.ACTIVE });
+      .where('a.status = :status', { status: PropertyStatus.ACTIVE })
+      .andWhere(
+        `NOT EXISTS (
+          SELECT 1 FROM bookings b
+          WHERE b.apartment_id = a.id
+            AND b.status IN (:...occupiedStatuses)
+            AND b.check_in <= CURRENT_DATE
+            AND b.check_out >= CURRENT_DATE
+        )`,
+        { occupiedStatuses: OCCUPYING_BOOKING_STATUSES },
+      );
 
     if (filters.city) {
       qb.andWhere('a.city = :city', { city: filters.city });
