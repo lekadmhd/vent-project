@@ -12,6 +12,7 @@ interface Payment {
   sender_account_name: string;
   transfer_amount: string;
   proof_of_transfer_url: string;
+  id_card_url: string | null;
   verification_status: string;
   rejection_reason: string | null;
   verified_at: string | null;
@@ -153,6 +154,11 @@ export default function FinancePage() {
                               <a className="btn" href={p.proof_of_transfer_url} target="_blank" rel="noreferrer" style={{ padding: '5px 10px', fontSize: 12 }}>
                                 Bukti
                               </a>
+                              {p.id_card_url && (
+                                <a className="btn" href={p.id_card_url} target="_blank" rel="noreferrer" style={{ padding: '5px 10px', fontSize: 12 }}>
+                                  KTP
+                                </a>
+                              )}
                             </div>
                           </td>
                         </tr>
