@@ -46,6 +46,7 @@ export default function BookPage({ params }: { params: { id: string } }) {
     transfer_amount: '',
     proof_of_transfer_url: '',
   });
+  const [idCardUrl, setIdCardUrl] = useState('');
   const [paymentError, setPaymentError] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -75,6 +76,14 @@ export default function BookPage({ params }: { params: { id: string } }) {
   const submitPayment = async () => {
     if (!booking) return;
     setPaymentError('');
+    if (!payment.proof_of_transfer_url) {
+      setPaymentError('Mohon upload bukti transfer terlebih dahulu.');
+      return;
+    }
+    if (!idCardUrl) {
+      setPaymentError('Mohon upload foto KTP terlebih dahulu.');
+      return;
+    }
     setBusy(true);
     try {
       await api(`/payments/bookings/${booking.id}`, {
@@ -82,6 +91,7 @@ export default function BookPage({ params }: { params: { id: string } }) {
         body: {
           ...payment,
           transfer_amount: parseFloat(payment.transfer_amount),
+          id_card_url: idCardUrl,
         },
         token,
       });
