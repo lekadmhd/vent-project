@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { fmtIdr } from '@/lib/format';
 import { useAuth } from '@/lib/auth';
+import { BuildingArt } from '@/components/building-art';
+import { Reveal } from '@/components/reveal';
+import { PinIcon, BedIcon, BathIcon, RulerIcon, CheckIcon, ShieldIcon, LockIcon } from '@/components/icons';
 
 interface Apartment {
   id: string;
@@ -24,6 +27,8 @@ interface Apartment {
   status: string;
 }
 
+const amenities = ['Furnished Unit', 'CCTV 24 Jam', 'Security 24/7', 'Kolam Renang', 'Gym Center', 'Smart Door Lock'];
+
 export default function ApartmentDetail({ params }: { params: { id: string } }) {
   const { user } = useAuth();
   const [apartment, setApartment] = useState<Apartment | null>(null);
@@ -36,68 +41,150 @@ export default function ApartmentDetail({ params }: { params: { id: string } }) 
   }, [params.id]);
 
   if (error) return <div className="error">{error}</div>;
-  if (!apartment) return <p className="muted">Memuat detail unit...</p>;
+  if (!apartment)
+    return (
+      <div className="search-panel" style={{ maxWidth: 760, margin: '0 auto' }}>
+        <p className="muted">Memuat detail unit...</p>
+      </div>
+    );
+
+  const price = parseFloat(apartment.price_monthly);
+  const adminFee = Math.round(price * 0.05);
+  const firstPayment = price + parseFloat(apartment.deposit_amount) + adminFee;
 
   return (
-    <div className="card" style={{ maxWidth: 760, margin: '0 auto' }}>
-      <div className="row-between" style={{ marginBottom: 16 }}>
-        <h1 className="title">{apartment.title}</h1>
-        <span className="badge success">Active</span>
-      </div>
-
-      <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', marginBottom: 20 }}>
-        <div>
-          <p className="muted" style={{ fontSize: 14 }}>
-            <strong style={{ color: 'var(--text)' }}>{apartment.complex_name}</strong>
-            <br />
-            Unit {apartment.unit_number}
-            {apartment.tower ? ` · Tower ${apartment.tower}` : ''}
-            <br />
-            {apartment.address}
-          </p>
-        </div>
-        <div>
-          <p className="muted mono" style={{ fontSize: 13, textAlign: 'right' }}>
-            {apartment.bedroom_count} BR · {apartment.bathroom_count} BA
-            {apartment.size_sqm ? ` · ${apartment.size_sqm} m²` : ''}
-            <br />
-            {apartment.latitude}, {apartment.longitude}
-          </p>
+    <div className="container" style={{ maxWidth: 980, padding: 0 }}>
+      {/* Visual header */}
+      <div
+        className="card"
+        style={{ overflow: 'hidden', padding: 0, marginBottom: 24 }}
+      >
+        <div className="unit-media" style={{ height: 280 }}>
+          <BuildingArt seed={`${apartment.title}-${apartment.complex_name}-${apartment.id}`} />
+          <div className="unit-media-overlay" style={{ background: 'linear-gradient(180deg, transparent 30%, rgba(10,14,23,0.95) 100%)' }} />
+          <span className="badge success unit-badge">Terverifikasi</span>
+          <span className="unit-price-pill" style={{ bottom: 16, right: 18, fontSize: 16 }}>
+            {fmtIdr(apartment.price_monthly)}<span style={{ fontSize: 11, fontWeight: 500 }}>/bulan</span>
+          </span>
         </div>
       </div>
 
-      <div className="glass" style={{ padding: 20, marginBottom: 20 }}>
-        <div className="row-between">
-          <div>
-            <div className="muted" style={{ fontSize: 12 }}>Sewa per Bulan</div>
-            <div className="mono" style={{ fontSize: 26, fontWeight: 700, color: 'var(--accent)' }}>
-              {fmtIdr(apartment.price_monthly)}
+      <div className="grid" style={{ gridTemplateColumns: '1.6fr 1fr', gap: 24, alignItems: 'start' }}>
+        <div>
+          <Reveal>
+            <div className="card" style={{ marginBottom: 24 }}>
+              <div className="row-between" style={{ marginBottom: 6 }}>
+                <h1 className="title" style={{ fontSize: 26 }}>{apartment.title}</h1>
+              </div>
+              <p className="muted" style={{ fontSize: 14, marginBottom: 18 }}>
+                <PinIcon /> {apartment.complex_name}
+                {apartment.tower ? ` · Tower ${apartment.tower}` : ''} — Unit {apartment.unit_number}
+                <br />
+                {apartment.address}, {apartment.city}
+              </p>
+
+              <div className="chip-row" style={{ marginBottom: 20 }}>
+                <span className="spec-chip"><BedIcon /> {apartment.bedroom_count} Kamar</span>
+                <span className="spec-chip muted-chip"><BathIcon /> {apartment.bathroom_count} Bathroom</span>
+                {apartment.size_sqm && <span className="spec-chip muted-chip"><RulerIcon /> {apartment.size_sqm} m²</span>}
+              </div>
+
+              <div className="glass" style={{ padding: 18, marginBottom: 20 }}>
+                <div className="muted" style={{ fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 12 }}>
+                  Lokasi Koordinat
+                </div>
+                <div className="mono" style={{ fontSize: 14, color: 'var(--accent)' }}>
+                  {apartment.latitude}, {apartment.longitude}
+                </div>
+              </div>
+
+              <div className="section-title" style={{ fontSize: 18 }}>Fasilitas Unit</div>
+              <div className="chip-row" style={{ marginBottom: 4 }}>
+                {amenities.map((a) => (
+                  <span key={a} className="chip">
+                    <CheckIcon /> {a}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={100}>
+            <div className="card">
+              <div className="section-title" style={{ fontSize: 18 }}>Cara Booking Aman</div>
+              <div className="row" style={{ gap: 10, alignItems: 'flex-start' }}>
+                <div className="icon-badge" style={{ width: 38, height: 38, fontSize: 15 }}>1</div>
+                <p className="muted" style={{ fontSize: 14, lineHeight: 1.6 }}>
+                  Sistem menerbitkan invoice dengan <strong style={{ color: 'var(--text)' }}>kode unik transfer</strong> agar pembayaran dapat dipetakan otomatis.
+                </p>
+              </div>
+              <div className="row" style={{ gap: 10, alignItems: 'flex-start', marginTop: 12 }}>
+                <div className="icon-badge" style={{ width: 38, height: 38, fontSize: 15 }}>2</div>
+                <p className="muted" style={{ fontSize: 14, lineHeight: 1.6 }}>
+                  Transfer ke rekening escrow resmi platform, lalu upload bukti transfer Anda.
+                </p>
+              </div>
+              <div className="row" style={{ gap: 10, alignItems: 'flex-start', marginTop: 12 }}>
+                <div className="icon-badge" style={{ width: 38, height: 38, fontSize: 15 }}>3</div>
+                <p className="muted" style={{ fontSize: 14, lineHeight: 1.6 }}>
+                  <strong style={{ color: 'var(--text)' }}>Finance Admin</strong> memverifikasi nominal & kode unik secara manual sebelum dana masuk escrow.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+
+        <Reveal delay={150}>
+          <div className="card" style={{ position: 'sticky', top: 88 }}>
+            <div className="section-title" style={{ fontSize: 18 }}>Rincian Biaya Transparan</div>
+
+            <div className="row-between" style={{ padding: '10px 0' }}>
+              <span className="muted" style={{ fontSize: 14 }}>Sewa / Bulan</span>
+              <span className="mono" style={{ fontSize: 14 }}>{fmtIdr(apartment.price_monthly)}</span>
+            </div>
+            <div className="row-between" style={{ padding: '10px 0' }}>
+              <span className="muted" style={{ fontSize: 14 }}>Deposit</span>
+              <span className="mono" style={{ fontSize: 14 }}>{fmtIdr(apartment.deposit_amount)}</span>
+            </div>
+            <div className="row-between" style={{ padding: '10px 0' }}>
+              <span className="muted" style={{ fontSize: 14 }}>Admin Fee (5%)</span>
+              <span className="mono" style={{ fontSize: 14 }}>{fmtIdr(adminFee)}</span>
+            </div>
+            <div className="row-between" style={{ padding: '10px 0', marginBottom: 4 }}>
+              <span className="muted" style={{ fontSize: 14 }}>Kode Unik</span>
+              <span className="mono muted" style={{ fontSize: 13 }}>Ditentukan saat booking</span>
+            </div>
+
+            <hr className="glow-line" style={{ margin: '10px 0' }} />
+
+            <div className="row-between">
+              <span style={{ fontWeight: 700 }}>Pembayaran Pertama</span>
+              <span className="mono" style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>
+                {fmtIdr(firstPayment)}
+              </span>
+            </div>
+            <p className="muted" style={{ fontSize: 12, marginTop: 8, lineHeight: 1.5 }}>
+              Termasuk sewa bulan pertama + deposit + admin fee. Kode unik transfer ditambahkan saat booking.
+            </p>
+
+            {user ? (
+              <Link href={`/book/${apartment.id}`} className="btn btn-primary" style={{ width: '100%', marginTop: 18, padding: '14px' }}>
+                Booking Sekarang →
+              </Link>
+            ) : (
+              <Link href="/login" className="btn btn-primary" style={{ width: '100%', marginTop: 18, padding: '14px' }}>
+                Masuk untuk Booking
+              </Link>
+            )}
+
+            <div className="chip-row" style={{ marginTop: 16, justifyContent: 'center' }}>
+              <span className="chip"><LockIcon /> Escrow</span>
+              <span className="chip"><CheckIcon /> Terverifikasi</span>
+              <span className="chip"><ShieldIcon /> Aman</span>
             </div>
           </div>
-          <div>
-            <div className="muted" style={{ fontSize: 12 }}>Deposit</div>
-            <div className="mono" style={{ fontSize: 26, fontWeight: 700 }}>
-              {fmtIdr(apartment.deposit_amount)}
-            </div>
-          </div>
-        </div>
+        </Reveal>
       </div>
-
-      <p className="muted" style={{ fontSize: 13, marginBottom: 20 }}>
-        Biaya transparan: Sewa + Deposit + Admin Fee platform + kode unik transfer akan
-        dihitung saat booking. Pembayaran diverifikasi manual oleh Finance Admin sebelum
-        dana masuk escrow.
-      </p>
-
-      {user ? (
-        <Link href={`/book/${apartment.id}`} className="btn btn-primary">
-          Booking Sekarang
-        </Link>
-      ) : (
-        <Link href="/login" className="btn btn-primary">
-          Masuk untuk Booking
-        </Link>
-      )}
     </div>
   );
 }
