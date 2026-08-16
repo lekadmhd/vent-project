@@ -20,6 +20,7 @@ import { AuthUser } from '../common/decorators/current-user.decorator';
 
 const EARTH_RADIUS_KM = 6371;
 const OCCUPYING_BOOKING_STATUSES = [
+  BookingStatus.PENDING_PAYMENT,
   BookingStatus.PENDING_FINANCE_APPROVAL,
   BookingStatus.PAID_IN_ESCROW,
   BookingStatus.CHECKED_IN,

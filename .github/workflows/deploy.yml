@@ -54,18 +54,10 @@ jobs:
             echo "NEXT_PUBLIC_API_URL=https://api.piraku.net/api" > apps/admin/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ vars.CLOUDINARY_CLOUD_NAME }}" >> apps/admin/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${{ vars.CLOUDINARY_UPLOAD_PRESET }}" >> apps/admin/.env.local
-            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "all")
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
             echo "Changed files: $CHANGED"
-            if [ -z "$CHANGED" ]; then CHANGED="all"; fi
-            NEED_API=false
-            NEED_FE=false
-            echo "$CHANGED" | grep -qE "^apps/api/|^package(-lock)?\.json$" && NEED_API=true
-            echo "$CHANGED" | grep -qE "^apps/(web|admin)/|^package(-lock)?\.json$" && NEED_FE=true
-            if [ "$CHANGED" = "all" ]; then NEED_API=true; NEED_FE=true; fi
-            echo "Build API: $NEED_API | Build FE: $NEED_FE"
-            if [ "$NEED_API" = true ]; then npm run build --workspace @aptrent/api; fi
-            if [ "$NEED_FE" = true ]; then npm run build --workspace @aptrent/web; fi
-            if [ "$NEED_FE" = true ]; then npm run build --workspace @aptrent/admin; fi
+            echo "Full build setiap deploy (aman dari cancel)."
+            npm run build
             bash database/bootstrap_vps.sh
             if [ ! -f apps/api/.env ]; then
               cp apps/api/.env.example apps/api/.env
