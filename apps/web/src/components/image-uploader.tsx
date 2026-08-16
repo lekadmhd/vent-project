@@ -9,7 +9,7 @@ declare global {
         options: Record<string, unknown>,
         cb: (
           error: unknown,
-          result: { event: string; info?: { secure_url: string } },
+          result: { event: string; info?: { secure_url: string; original_filename?: string } },
         ) => void,
       ) => void;
     };
