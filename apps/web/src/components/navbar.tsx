@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth';
 
 const navLinks = [
   { label: 'Cari Unit', href: '/#search' },
-  { label: 'Prosess', href: '/#how-it-works' },
+  { label: 'Proses', href: '/#how-it-works' },
   { label: 'Keamanan', href: '/#security' },
 ];
 
