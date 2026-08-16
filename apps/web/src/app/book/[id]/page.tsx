@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { api, getToken } from '@/lib/api';
 import { fmtIdr } from '@/lib/format';
+import { FileUploader } from '@/components/file-uploader';
 
 interface Apartment {
   id: string;
