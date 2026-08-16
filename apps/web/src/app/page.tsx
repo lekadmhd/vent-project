@@ -48,7 +48,7 @@ const steps = [
   {
     n: '01',
     title: 'Temukan Unit',
-    desc: 'Cari apartemen dengan filter kota, harga, tipe kamar, dan perabotan secara real-time di seluruh kota.',
+    desc: 'Cari apartemen dengan filter kota, harga, tipe kamar, dan furniture secara real-time di seluruh kota.',
   },
   {
     n: '02',
