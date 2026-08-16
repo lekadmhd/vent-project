@@ -20,8 +20,10 @@ if [ ! -d "$APP_DIR/.git" ]; then
 fi
 
 cd "$APP_DIR"
-echo "Pulling latest code..."
-git pull origin main
+echo "Pulling latest code (hard reset)..."
+git fetch origin
+git reset --hard origin/main
+git clean -fd
 
 echo "Installing dependencies (workspaces)..."
 npm ci || npm install

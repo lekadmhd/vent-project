@@ -30,11 +30,14 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
+            set -e
             if [ ! -d "${{ secrets.APP_DIR }}/.git" ]; then
               git clone git@github.com:lekadmhd/vent-project.git ${{ secrets.APP_DIR }}
             fi
             cd ${{ secrets.APP_DIR }}
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
+            git clean -fd
             npm ci || npm install
             npm run build
             bash database/bootstrap_vps.sh
