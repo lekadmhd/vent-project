@@ -19,11 +19,11 @@ const watcher = chokidar.watch('.', {
     /\.DS_Store/,
   ],
   ignoreInitial: true,
-  awaitWriteFinish: { stabilityThreshold: 1200, pollInterval: 250 },
+  awaitWriteFinish: { stabilityThreshold: 600, pollInterval: 200 },
 });
 
 let timer = null;
-const debounceMs = 5000;
+const debounceMs = 1500;
 
 function deploy() {
   try {

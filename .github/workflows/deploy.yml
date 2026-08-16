@@ -13,20 +13,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Install dependencies
-        run: npm ci || npm install
-
-      - name: Build all apps
-        run: npm run build
-
       - name: SSH into VPS and deploy
         uses: appleboy/ssh-action@v1
         with:
@@ -61,15 +47,25 @@ jobs:
             git fetch origin
             git reset --hard origin/main
             git clean -fd
-            rm -rf node_modules apps/api/node_modules apps/web/node_modules apps/admin/node_modules
-            npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+            npm install --no-audit --no-fund
             echo "NEXT_PUBLIC_API_URL=https://api.piraku.net/api" > apps/web/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ vars.CLOUDINARY_CLOUD_NAME }}" >> apps/web/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${{ vars.CLOUDINARY_UPLOAD_PRESET }}" >> apps/web/.env.local
             echo "NEXT_PUBLIC_API_URL=https://api.piraku.net/api" > apps/admin/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=${{ vars.CLOUDINARY_CLOUD_NAME }}" >> apps/admin/.env.local
             echo "NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=${{ vars.CLOUDINARY_UPLOAD_PRESET }}" >> apps/admin/.env.local
-            npm run build
+            CHANGED=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "all")
+            echo "Changed files: $CHANGED"
+            if [ -z "$CHANGED" ]; then CHANGED="all"; fi
+            NEED_API=false
+            NEED_FE=false
+            echo "$CHANGED" | grep -qE "^apps/api/|^package(-lock)?\.json$" && NEED_API=true
+            echo "$CHANGED" | grep -qE "^apps/(web|admin)/|^package(-lock)?\.json$" && NEED_FE=true
+            if [ "$CHANGED" = "all" ]; then NEED_API=true; NEED_FE=true; fi
+            echo "Build API: $NEED_API | Build FE: $NEED_FE"
+            if [ "$NEED_API" = true ]; then npm run build --workspace @aptrent/api; fi
+            if [ "$NEED_FE" = true ]; then npm run build --workspace @aptrent/web; fi
+            if [ "$NEED_FE" = true ]; then npm run build --workspace @aptrent/admin; fi
             bash database/bootstrap_vps.sh
             if [ ! -f apps/api/.env ]; then
               cp apps/api/.env.example apps/api/.env
