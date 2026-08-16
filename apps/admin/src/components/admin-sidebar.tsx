@@ -96,6 +96,7 @@ export function AdminSidebar() {
             {user.role}
           </div>
         </div>
+        <ChangePasswordButton />
         <button className="nav-btn" onClick={logout}>
           Logout
         </button>
