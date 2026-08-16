@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { api, getToken } from '@/lib/api';
 import { RequireAdmin } from '@/components/require-admin';
 import { fmtIdr, StatusBadge } from '@/lib/format';
+import { ImageUploader } from '@/components/image-uploader';
 
 interface ApartmentRow {
   id: string;
@@ -41,6 +42,7 @@ interface ApartmentForm {
   deposit_amount: string;
   status: string;
   furnishing: string;
+  image_urls: string[];
 }
 
 const EMPTY_FORM: ApartmentForm = {
@@ -59,6 +61,7 @@ const EMPTY_FORM: ApartmentForm = {
   deposit_amount: '',
   status: 'active',
   furnishing: 'unfurnished',
+  image_urls: [],
 };
 
 const FURNISH_OPTIONS = [
