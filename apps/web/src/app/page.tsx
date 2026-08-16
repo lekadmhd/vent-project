@@ -1,12 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { fmtIdr } from '@/lib/format';
 import { BuildingArt } from '@/components/building-art';
 import { Reveal } from '@/components/reveal';
-import { PinIcon } from '@/components/icons';
+import { Counter } from '@/components/counter';
+import { RotatingWords } from '@/components/rotating-words';
+import { TestimonialCarousel } from '@/components/testimonial-carousel';
+import { PinIcon, BedIcon, BathIcon, RulerIcon, CheckIcon, ShieldIcon, LockIcon, SearchIcon } from '@/components/icons';
 
 interface Apartment {
   id: string;
@@ -41,6 +44,8 @@ const initialFilters: Filters = {
   lng: '',
 };
 
+const quickCities = ['Jakarta', 'Jakarta Selatan', 'Tangerang', 'Bekasi', 'BSD City', 'Depok'];
+
 const steps = [
   {
     n: '01',
@@ -59,7 +64,7 @@ const steps = [
   },
 ];
 
-const securityFeatures = [
+const trustFeatures = [
   {
     title: 'Enkripsi AES-256',
     desc: 'NIK, KTP, dan data sensitif dienkripsi field-level menggunakan AES-256-GCM sebelum disimpan.',
@@ -82,24 +87,43 @@ const securityFeatures = [
   },
 ];
 
+const marqueeItems = [
+  'AES-256-GCM',
+  'S3 Private Storage',
+  'Signed URL 15 Menit',
+  'Escrow Berlapis',
+  'Verifikasi Finance 2-Layer',
+  'Audit Trail Lengkap',
+  'KYC Terenkripsi',
+  'Watermark Otomatis',
+];
+
+function cityHue(city: string): number {
+  let h = 0;
+  for (let i = 0; i < city.length; i++) h = (Math.imul(31, h) + city.charCodeAt(i)) | 0;
+  return Math.abs(h) % 360;
+}
+
 export default function HomePage() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [filters, setFilters] = useState<Filters>(initialFilters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const load = useCallback(async () => {
+  const doSearch = useCallback(async (next: Filters) => {
+    setFilters(next);
     setLoading(true);
     setError('');
     try {
       const params = new URLSearchParams();
-      if (filters.city) params.set('city', filters.city);
-      if (filters.max_price) params.set('max_price', filters.max_price);
-      if (filters.bedrooms) params.set('bedrooms', filters.bedrooms);
-      if (filters.radius_km && filters.lat && filters.lng) {
-        params.set('radius_km', filters.radius_km);
-        params.set('lat', filters.lat);
-        params.set('lng', filters.lng);
+      if (next.city) params.set('city', next.city);
+      if (next.max_price) params.set('max_price', next.max_price);
+      if (next.bedrooms) params.set('bedrooms', next.bedrooms);
+      if (next.radius_km && next.lat && next.lng) {
+        params.set('radius_km', next.radius_km);
+        params.set('lat', next.lat);
+        params.set('lng', next.lng);
       }
       const query = params.toString();
       const data = await api<Apartment[]>(`/apartments${query ? `?${query}` : ''}`);
@@ -109,7 +133,11 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, []);
+
+  const load = useCallback(() => {
+    doSearch(filters);
+  }, [doSearch, filters]);
 
   useEffect(() => {
     load();
@@ -118,18 +146,19 @@ export default function HomePage() {
   const set = (key: keyof Filters, value: string) =>
     setFilters((f) => ({ ...f, [key]: value }));
 
-  const resetFilters = () => {
-    setFilters(initialFilters);
-    setLoading(true);
-    setError('');
-    api<Apartment[]>('/apartments')
-      .then(setApartments)
-      .catch((e) => setError(e instanceof Error ? e.message : 'Gagal memuat data'))
-      .finally(() => setLoading(false));
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    doSearch(filters);
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const hasFilter =
-    filters.city || filters.max_price || filters.bedrooms || filters.radius_km || filters.lat || filters.lng;
+  const cityCounts = apartments.reduce<Record<string, number>>((acc, a) => {
+    acc[a.city] = (acc[a.city] ?? 0) + 1;
+    return acc;
+  }, {});
+  const topCities = Object.entries(cityCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8);
 
   return (
     <div>
@@ -138,29 +167,75 @@ export default function HomePage() {
         <div className="bg-grid" />
         <div className="orb orb-a" />
         <div className="orb orb-b" />
-        <div className="hero-content">
-          <div className="hero-kicker">Enterprise Apartment Marketplace</div>
+
+        <div className="hero-main">
+          <div className="hero-kicker">
+            <span className="live-dot" />
+            Enterprise Apartment Marketplace
+          </div>
           <h1 className="hero-title">
             Sewa Apartemen Premium,
             <br />
-            <span className="gradient-text">Dijamin Aman & Transparan</span>
+            <span className="gradient-text">
+              <RotatingWords words={['Aman & Transparan', 'Cepat & Mudah', 'Terverifikasi', 'Escrow Berlapis']} />
+            </span>
           </h1>
           <p className="hero-sub">
             Platform sewa unit apartemen enterprise dengan escrow berlapis, enkripsi data AES-256,
-            dan verifikasi pembayaran manual oleh Finance Admin. Transparan dari harga hingga proses check-in.
+            dan verifikasi pembayaran manual oleh Finance Admin. Transparan dari harga hingga check-in.
           </p>
-          <div className="hero-cta">
-            <a href="#search" className="btn btn-primary btn-lg">
-              Cari Unit Sekarang
-            </a>
-            <a href="#how-it-works" className="btn btn-outline btn-lg">
-              Cara Booking
-            </a>
+
+          {/* Prominent search bar — jendela360 style */}
+          <div className="hero-search" id="search">
+            <form onSubmit={handleSearch}>
+              <div className="field">
+                <label>Nama Area / Kota</label>
+                <input className="input" value={filters.city} onChange={(e) => set('city', e.target.value)} placeholder="Jakarta, Tangerang, Bekasi..." />
+              </div>
+              <div className="field">
+                <label>Max Harga / Bulan</label>
+                <input className="input" type="number" value={filters.max_price} onChange={(e) => set('max_price', e.target.value)} placeholder="5.000.000" />
+              </div>
+              <div className="field">
+                <label>Tipe Kamar</label>
+                <select className="select" value={filters.bedrooms} onChange={(e) => set('bedrooms', e.target.value)}>
+                  <option value="">Semua</option>
+                  <option value="1">1 BR</option>
+                  <option value="2">2 BR</option>
+                  <option value="3">3 BR+</option>
+                </select>
+              </div>
+              <div className="field">
+                <label>Radius (km)</label>
+                <input className="input" type="number" value={filters.radius_km} onChange={(e) => set('radius_km', e.target.value)} placeholder="10" />
+              </div>
+              <button type="submit" className="btn btn-primary">
+                <SearchIcon size={15} color="currentColor" /> Cari
+              </button>
+            </form>
+            <div className="hero-quick">
+              <span>Populer:</span>
+              {quickCities.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => {
+                    doSearch({ ...filters, city: filters.city === c ? '' : c });
+                    resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={filters.city === c ? { color: 'var(--accent)', borderColor: 'rgba(0,240,255,0.4)' } : undefined}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="stats">
             <div className="stat">
-              <div className="stat-value">{apartments.length}</div>
+              <div className="stat-value">
+                <Counter value={apartments.length} />
+              </div>
               <div className="stat-label">Unit Aktif</div>
             </div>
             <div className="stat">
@@ -177,81 +252,16 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ============ SEARCH ============ */}
-      <section id="search" className="section" style={{ paddingTop: 8 }}>
-        <div className="search-panel">
-          <div className="row-between" style={{ marginBottom: 20 }}>
-            <h2 className="section-title" style={{ marginBottom: 0 }}>
-              Cari Unit Anda
-            </h2>
-            <div className="chip-row">
-              <span className="chip">Harga Transparan</span>
-              <span className="chip">Escrow Aman</span>
-              <span className="chip">Terverifikasi</span>
-            </div>
-          </div>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              load();
-            }}
-          >
-            <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
-              <div className="field">
-                <label>Kota</label>
-                <input className="input" value={filters.city} onChange={(e) => set('city', e.target.value)} placeholder="Jakarta" />
-              </div>
-              <div className="field">
-                <label>Max Harga / Bulan</label>
-                <input className="input" type="number" value={filters.max_price} onChange={(e) => set('max_price', e.target.value)} placeholder="5.000.000" />
-              </div>
-              <div className="field">
-                <label>Kamar Tidur</label>
-                <select className="select" value={filters.bedrooms} onChange={(e) => set('bedrooms', e.target.value)}>
-                  <option value="">Semua</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3+</option>
-                </select>
-              </div>
-              <div className="field">
-                <label>Radius (km)</label>
-                <input className="input" type="number" value={filters.radius_km} onChange={(e) => set('radius_km', e.target.value)} placeholder="10" />
-              </div>
-              <div className="field">
-                <label>Latitude</label>
-                <input className="input" type="number" step="any" value={filters.lat} onChange={(e) => set('lat', e.target.value)} placeholder="-6.20" />
-              </div>
-              <div className="field">
-                <label>Longitude</label>
-                <input className="input" type="number" step="any" value={filters.lng} onChange={(e) => set('lng', e.target.value)} placeholder="106.81" />
-              </div>
-            </div>
-            <div className="row" style={{ justifyContent: 'space-between' }}>
-              {hasFilter ? (
-                <button type="button" className="btn" onClick={resetFilters}>
-                  Reset Filter
-                </button>
-              ) : (
-                <span className="muted" style={{ fontSize: 13 }}>
-                  {apartments.length} unit tersedia
-                </span>
-              )}
-              <button type="submit" className="btn btn-primary">
-                Cari Unit →
-              </button>
-            </div>
-          </form>
+        <div className="hero-skyline">
+          <BuildingArt variant="skyline" seed="aptrent-skyline" />
         </div>
       </section>
 
-      {/* ============ UNIT LIST ============ */}
-      <section className="section" id="units" style={{ paddingTop: 32 }}>
+      {/* ============ POPULAR UNITS ============ */}
+      <section className="section" id="units" ref={resultsRef} style={{ scrollMarginTop: 80 }}>
         <div className="section-head">
-          <div className="section-kicker">Featured Units</div>
+          <div className="section-kicker">Star Listing Units</div>
           <h2 className="section-title" style={{ fontSize: 30 }}>
             Unit Tersedia untuk Anda
           </h2>
@@ -294,7 +304,9 @@ export default function HomePage() {
                     <BuildingArt seed={`${a.title}-${a.complex_name}-${a.id}`} />
                     <div className="unit-media-overlay" />
                     <span className="badge success unit-badge">Terverifikasi</span>
-                    <span className="unit-price-pill">{fmtIdr(a.price_monthly)}<span style={{ fontSize: 10, fontWeight: 500 }}>/bln</span></span>
+                    <span className="unit-price-pill">
+                      {fmtIdr(a.price_monthly)}<span style={{ fontSize: 10, fontWeight: 500 }}>/bln</span>
+                    </span>
                   </div>
                   <div className="unit-body">
                     <div>
@@ -305,9 +317,9 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className="chip-row" style={{ marginTop: 4 }}>
-                      <span className="spec-chip">{a.bedroom_count} BR</span>
-                      <span className="spec-chip muted-chip">{a.bathroom_count} BA</span>
-                      {a.size_sqm && <span className="spec-chip muted-chip">{a.size_sqm} m²</span>}
+                      <span className="spec-chip"><BedIcon /> {a.bedroom_count} BR</span>
+                      <span className="spec-chip muted-chip"><BathIcon /> {a.bathroom_count} BA</span>
+                      {a.size_sqm && <span className="spec-chip muted-chip"><RulerIcon /> {a.size_sqm} m²</span>}
                       {a.tower && <span className="spec-chip muted-chip">Tower {a.tower}</span>}
                     </div>
                     <div className="row-between" style={{ marginTop: 'auto', paddingTop: 6 }}>
@@ -322,6 +334,33 @@ export default function HomePage() {
                 </article>
               </Link>
             </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <hr className="glow-line" />
+
+      {/* ============ DISCOVER BY CITY ============ */}
+      <section className="section">
+        <div className="section-head">
+          <div className="section-kicker">Discover</div>
+          <h2 className="section-title" style={{ fontSize: 30 }}>
+            Temukan Apartemen di
+          </h2>
+          <p className="section-desc">
+            Jelajahi unit berdasarkan kota dengan jumlah listing real-time dari database.
+          </p>
+        </div>
+        <div className="city-grid">
+          {topCities.length === 0 &&
+            ['Jakarta', 'Tangerang', 'Bekasi', 'Depok', 'Bogor', 'Bandung'].map((c, i) => (
+              <CityCard key={c} name={c} count="—" delay={i * 60} />
+            ))}
+          {topCities.map(([city, count], i) => (
+            <CityCard key={city} name={city} count={String(count)} delay={i * 60} onSelect={() => {
+              doSearch({ ...filters, city });
+              resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }} />
           ))}
         </div>
       </section>
@@ -354,21 +393,24 @@ export default function HomePage() {
 
       <hr className="glow-line" />
 
-      {/* ============ SECURITY ============ */}
+      {/* ============ WHY CHOOSE US ============ */}
       <section className="section" id="security">
         <div className="section-head">
           <div className="section-kicker">Zero-Trust Architecture</div>
           <h2 className="section-title" style={{ fontSize: 30 }}>
-            Keamanan Data Enterprise-Grade
+            Mengapa Memilih AptRent
           </h2>
           <p className="section-desc">
             Arsitektur keamanan berlapis untuk melindungi data pribadi dan dana Anda.
           </p>
         </div>
         <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-          {securityFeatures.map((f, idx) => (
+          {trustFeatures.map((f, idx) => (
             <Reveal key={f.title} delay={idx * 100}>
               <div className="feature">
+                <div className="feature-icon">
+                  {idx === 0 ? <LockIcon size={22} /> : <ShieldIcon size={22} />}
+                </div>
                 <span className="chip" style={{ borderColor: 'rgba(0,240,255,0.3)', color: 'var(--accent)', marginBottom: 14 }}>
                   {f.tag}
                 </span>
@@ -380,14 +422,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ TRUST ROW ============ */}
+      {/* ============ TESTIMONIAL ============ */}
+      <section className="section">
+        <div className="section-head">
+          <div className="section-kicker">Kata Mereka</div>
+          <h2 className="section-title" style={{ fontSize: 30 }}>
+            Dipercaya Ribuan Penyewa
+          </h2>
+        </div>
+        <Reveal>
+          <TestimonialCarousel />
+        </Reveal>
+      </section>
+
+      {/* ============ MARQUEE ============ */}
       <section className="section" style={{ paddingTop: 8, paddingBottom: 24 }}>
-        <div className="trust-row">
-          <span>AES-256-GCM</span>
-          <span>S3 Private Storage</span>
-          <span>Signed URL 15 Min</span>
-          <span>Escrow Berlapis</span>
-          <span>Audit Trail</span>
+        <div className="marquee">
+          <div className="marquee-track">
+            {[...marqueeItems, ...marqueeItems].map((item, i) => (
+              <span key={i}>
+                <CheckIcon size={13} color="var(--success)" /> {item}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -411,5 +468,38 @@ export default function HomePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+interface CityCardProps {
+  name: string;
+  count: string;
+  delay: number;
+  onSelect?: () => void;
+}
+
+function CityCard({ name, count, delay, onSelect }: CityCardProps) {
+  const hue = cityHue(name);
+  const style = {
+    '--city-a': `linear-gradient(160deg, hsl(${hue}, 80%, 22%), rgba(10,14,23,0.9))`,
+    '--city-b': `hsl(${(hue + 40) % 360}, 85%, 55%)`,
+  } as React.CSSProperties;
+
+  return (
+    <Reveal delay={delay}>
+      <button
+        type="button"
+        className="city-card"
+        style={style}
+        onClick={onSelect}
+        aria-label={`Lihat unit di ${name}`}
+      >
+        <h3>{name}</h3>
+        <div className="city-count">
+          {count} unit
+          <span style={{ color: 'var(--accent)' }}>→</span>
+        </div>
+      </button>
+    </Reveal>
   );
 }
