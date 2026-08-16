@@ -213,7 +213,7 @@ export default function HomePage() {
                 <SearchIcon size={13} color="currentColor" />
               </button>
             </form>
-            <div className="hero-quick">
+            <div className="hero-quick"> 
               <span>Populer:</span>
               {quickCities.map((c) => (
                 <button
