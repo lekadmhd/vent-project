@@ -4,5 +4,6 @@ dist/
 build/
 .env
 *.log
+.vscode/sftp.json
 .DS_Store
 *.local
